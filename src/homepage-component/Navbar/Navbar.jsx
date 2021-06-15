@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Navbar.css';
-import userIcon from '../assets/images/img10.jpg';
+import userIcon from '../../assets/images/img10.jpg';
 function Navbar(props) {
   return (
     <>

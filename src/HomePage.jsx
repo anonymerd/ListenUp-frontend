@@ -1,25 +1,38 @@
 import React, { Component } from 'react';
 
+import Navbar from './homepage-component/Navbar/Navbar';
+import Player from './homepage-component/Player/Player';
+
 import './HomePage.css';
-import Navbar from './homepage-component/Navbar';
+
 import mainImage from './assets/images/img12.jpg';
 import googleIcon from './assets/icons/google-icon.svg';
 
-const imgURL = 'https://source.unsplash.com/1600x900/?songs';
-
-const audio = new Audio('http://localhost:8000/');
-
 export default class HomePage extends Component {
-  audio = new Audio('http://localhost:8000/');
+  state = {
+    isSongPlaying: false,
+    currSongTime: 0,
+    currSongDuration: 0,
+  };
+
+  currSong = new Audio('http://localhost:8000/');
+
+  componentDidMount() {
+    this.currSong.addEventListener('canplaythrough', () => {
+      this.setState({
+        currSongDuration: this.currSong.duration,
+      });
+    });
+    this.currSong.ontimeupdate = () => {
+      this.setState({
+        currSongTime: this.currSong.currentTime,
+      });
+    };
+  }
 
   toggleSong = () => {
-    // const player = document.getElementById('track-player');
-    // if (player.paused) player.play();
-    // else player.pause();
-    if (this.audio.paused) this.audio.play();
-    else this.audio.pause();
-
-    console.log(audio.paused);
+    if (this.currSong.paused) this.currSong.play();
+    else this.currSong.pause();
   };
 
   render() {
@@ -67,15 +80,11 @@ export default class HomePage extends Component {
                   }}
                 ></div>
                 <div className='right-section-popups music-player-container'>
-                  <audio autoplay controls id='track-player'>
-                    <source src='http://localhost:8000/' type='audio/mpeg' />
-                  </audio>
-                  <button
-                    className='btn toggle-song-btn'
-                    onClick={this.toggleSong}
-                  >
-                    Play/Pause
-                  </button>
+                  <Player
+                    clicked={this.toggleSong}
+                    currSongTime={this.state.currSongTime}
+                    currSongDuration={this.state.currSongDuration}
+                  />
                 </div>
               </div>
             </section>
