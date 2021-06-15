@@ -50,24 +50,22 @@
   margin: 20px 0 30px 0;
 }
 
-.main-section-left .signin-button button {
-  padding: 15px 50px;
-  border-radius: 40px;
-  text-align: center;
-  display: inline-block;
-  background-color: #46a528;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 125%;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
+.main-section-left .signin-button .google-login-button {
+  display: block;
+  padding: 5px 30px !important;
+  border-radius: 40px !important;
+  background-color: #46a528 !important;
+  color: white !important;
+  font-size: 120% !important;
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 400 !important;
 }
 
-.main-section-left .signin-button button .google-icon,
-.main-section-left .signin-button button span {
+.main-section-left .signin-button .google-login-button .google-icon,
+.main-section-left .signin-button .google-login-button span {
   vertical-align: middle;
   margin: 0 5px;
+  font-weight: 600;
 }
 
 .main-section-right .right-section-container .main-image-container {
