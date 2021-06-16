@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-
 import Navbar from './homepage-component/Navbar/Navbar';
 import Player from './homepage-component/Player/Player';
+import userIcon from './assets/images/img10.jpg';
 import { GoogleLogin } from 'react-google-login';
-
+import { GoogleLogout } from 'react-google-login';
 import './HomePage.css';
 
 import mainImage from './assets/images/img12.jpg';
@@ -18,11 +18,12 @@ export default class HomePage extends Component {
     currSong: new Audio(),
     songName: 'Rap God',
     songArtist: 'Eminem',
-    albumArt:
-      'https://jitselemmens.com/newsite/wp-content/uploads/2017/08/rap_godb.jpg',
+    albumArt:'https://jitselemmens.com/newsite/wp-content/uploads/2017/08/rap_godb.jpg',
     streamAddress: '',
     currSongTime: 0,
     currSongDuration: 0,
+    isLoggedIn: false,
+    profile_pic: userIcon
   };
 
   async componentDidMount() {
@@ -66,19 +67,38 @@ export default class HomePage extends Component {
         tokenId: res.tokenId,
       }
     }).then((response)=> {
-      console.log(response);
+      console.log('response from backend');
+      const data = response.data;
+      console.log(data.email_verified);
+      console.log(data.picture);
+      if(data.email_verified === true) {
+        console.log('here');
+        this.setState({
+          profile_pic: data.picture
+        });
+      }
     });
-    // console.log(res);
+    console.log(res);
   };
 
   loginFaliure = (res) => {
     // console.log(res);
   };
 
+  logoutSuccess = (res) => {
+    console.log('signed out '+ res);
+    this.setState({profile_pic: userIcon});
+  }
+
+  logoutFaliure = (err) => {
+    console.log(err);
+  }
+
+
   render() {
     return (
       <div class='wrapper'>
-        <Navbar />
+        <Navbar userimageUrl={this.state.profile_pic} SERVER_ADDRESS = 'http://localhost:8000/'/>
         <div className='container'>
           <div className='main-section'>
             <section className='main-section-left'>
@@ -96,6 +116,7 @@ export default class HomePage extends Component {
                   isSignedIn={true}
                   icon={false}
                 >
+
                   <img
                     src={googleIcon}
                     alt='Google Icon'
@@ -103,6 +124,13 @@ export default class HomePage extends Component {
                   />
                   <span>Sign In With Google</span>
                 </GoogleLogin>
+                <GoogleLogout
+                  clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                  buttonText="Logout"
+                  onLogoutSuccess={this.logoutSuccess}
+                  onFailure={this.logoutFaliure}
+                >
+                </GoogleLogout>
               </div>
             </section>
             <section className='main-section-right'>
