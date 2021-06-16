@@ -94,11 +94,11 @@ export default class HomePage extends Component {
     console.log(err);
   }
 
-
   render() {
     return (
       <div class='wrapper'>
-        <Navbar userimageUrl={this.state.profile_pic} SERVER_ADDRESS = 'http://localhost:8000/'/>
+        <Navbar userimageUrl={this.state.profile_pic} SERVER_ADDRESS = 'http://localhost:8000/'
+         logoutSuccess = {this.logoutSuccess} logoutFaliure = {this.logoutFaliure}/>
         <div className='container'>
           <div className='main-section'>
             <section className='main-section-left'>
@@ -124,13 +124,7 @@ export default class HomePage extends Component {
                   />
                   <span>Sign In With Google</span>
                 </GoogleLogin>
-                <GoogleLogout
-                  clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
-                  buttonText="Logout"
-                  onLogoutSuccess={this.logoutSuccess}
-                  onFailure={this.logoutFaliure}
-                >
-                </GoogleLogout>
+                
               </div>
             </section>
             <section className='main-section-right'>
