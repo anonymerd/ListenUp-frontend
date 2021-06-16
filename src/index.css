@@ -1,20 +1,11 @@
-<<<<<<< HEAD
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700&family=Open+Sans:wght@100;200;300;400;500;600;&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&family=Merriweather&family=Montserrat&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Open+Sans&family=Playfair+Display&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-=======
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&family=Open+Sans:wght@100;200;300;400;500;600;&display=swap');
 
->>>>>>> 1d32fc7189146444d437553b38577fb6ca9ba937
+
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-<<<<<<< HEAD
-  font-family: 'Poppins', sans-serif;
-=======
   font-family: 'Montserrat', sans-serif;
->>>>>>> 1d32fc7189146444d437553b38577fb6ca9ba937
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;

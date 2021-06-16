@@ -59,11 +59,20 @@ export default class HomePage extends Component {
   };
 
   loginSuccess = (res) => {
-    console.log(res);
+    axios({
+      method:'POST',
+      url: `${SERVER_ADDRESS}login`,
+      data: {
+        tokenId: res.tokenId,
+      }
+    }).then((response)=> {
+      console.log(response);
+    });
+    // console.log(res);
   };
 
   loginFaliure = (res) => {
-    console.log(res);
+    // console.log(res);
   };
 
   render() {
