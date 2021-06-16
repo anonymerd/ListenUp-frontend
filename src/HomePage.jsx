@@ -18,12 +18,14 @@ export default class HomePage extends Component {
     currSong: new Audio(),
     songName: 'Rap God',
     songArtist: 'Eminem',
-    albumArt:'https://jitselemmens.com/newsite/wp-content/uploads/2017/08/rap_godb.jpg',
+    albumArt:
+      'https://jitselemmens.com/newsite/wp-content/uploads/2017/08/rap_godb.jpg',
     streamAddress: '',
     currSongTime: 0,
     currSongDuration: 0,
+    currSongVolume: 5,
     isLoggedIn: false,
-    profile_pic: userIcon
+    profile_pic: userIcon,
   };
 
   async componentDidMount() {
@@ -34,15 +36,16 @@ export default class HomePage extends Component {
 
       this.setState({
         currSong: new Audio(musicResult.streamAddress),
+        songName: musicResult.song,
+        songArtist: musicResult.artist,
+        albumArt: musicResult.thumbnail.url,
       });
 
       this.state.currSong.addEventListener('canplaythrough', () => {
         this.setState({
-          songName: musicResult.song,
-          songArtist: musicResult.artist,
-          albumArt: musicResult.thumbnail.url,
           currSongDuration: this.state.currSong.duration,
         });
+        this.state.currSong.volume = 0.5;
       });
       this.state.currSong.ontimeupdate = () => {
         this.setState({
@@ -59,22 +62,33 @@ export default class HomePage extends Component {
     else this.state.currSong.pause();
   };
 
+  changeSongTime = (event) => {
+    this.state.currSong.currentTime = '16';
+  };
+
+  changeSongVolume = (event) => {
+    this.state.currSong.volume = event.target.value / 10;
+    this.setState({
+      currSongVolume: event.target.value,
+    });
+  };
+
   loginSuccess = (res) => {
     axios({
-      method:'POST',
+      method: 'POST',
       url: `${SERVER_ADDRESS}login`,
       data: {
         tokenId: res.tokenId,
-      }
-    }).then((response)=> {
+      },
+    }).then((response) => {
       console.log('response from backend');
       const data = response.data;
       console.log(data.email_verified);
       console.log(data.picture);
-      if(data.email_verified === true) {
+      if (data.email_verified === true) {
         console.log('here');
         this.setState({
-          profile_pic: data.picture
+          profile_pic: data.picture,
         });
       }
     });
@@ -86,19 +100,21 @@ export default class HomePage extends Component {
   };
 
   logoutSuccess = (res) => {
-    console.log('signed out '+ res);
-    this.setState({profile_pic: userIcon});
-  }
+    console.log('signed out ' + res);
+    this.setState({ profile_pic: userIcon });
+  };
 
   logoutFaliure = (err) => {
     console.log(err);
-  }
-
+  };
 
   render() {
     return (
       <div class='wrapper'>
-        <Navbar userimageUrl={this.state.profile_pic} SERVER_ADDRESS = 'http://localhost:8000/'/>
+        <Navbar
+          userimageUrl={this.state.profile_pic}
+          SERVER_ADDRESS='http://localhost:8000/'
+        />
         <div className='container'>
           <div className='main-section'>
             <section className='main-section-left'>
@@ -116,7 +132,6 @@ export default class HomePage extends Component {
                   isSignedIn={true}
                   icon={false}
                 >
-
                   <img
                     src={googleIcon}
                     alt='Google Icon'
@@ -125,12 +140,11 @@ export default class HomePage extends Component {
                   <span>Sign In With Google</span>
                 </GoogleLogin>
                 <GoogleLogout
-                  clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
-                  buttonText="Logout"
+                  clientId='658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com'
+                  buttonText='Logout'
                   onLogoutSuccess={this.logoutSuccess}
                   onFailure={this.logoutFaliure}
-                >
-                </GoogleLogout>
+                ></GoogleLogout>
               </div>
             </section>
             <section className='main-section-right'>
@@ -159,6 +173,9 @@ export default class HomePage extends Component {
                     clicked={this.toggleSong}
                     currSongTime={this.state.currSongTime}
                     currSongDuration={this.state.currSongDuration}
+                    // slide={this.changeSongTime}
+                    volumeChange={this.changeSongVolume}
+                    volume={this.state.currSongVolume}
                   />
                 </div>
               </div>
