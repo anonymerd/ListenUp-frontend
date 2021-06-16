@@ -1,8 +1,13 @@
 .player-container {
   width: 100%;
-  padding: 3px;
+  padding: 0 3px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.player-btn-container {
+  height: 100%;
 }
 
 .btn {
@@ -55,4 +60,37 @@
 .player-container .time-container {
   color: white;
   margin: 0 10px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  width: 5%;
+}
+
+.player-container .player-range-container {
+  display: flex;
+  align-items: center;
+  width: 40%;
+}
+
+.player-container .player-range-container .player-range,
+.player-container .player-volume-container .player-volume {
+  /* -webkit-appearance: none; */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 3px;
+}
+
+.player-container .player-volume-container {
+  color: white;
+  display: flex;
+  align-items: center;
+  width: 25%;
+}
+
+.player-container .player-volume-container .volume-icon-container {
+  width: 20%;
+  margin: 0 5px;
+  display: flex;
+  align-items: center;
 }
