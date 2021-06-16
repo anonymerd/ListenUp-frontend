@@ -1,7 +1,16 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import './Navbar.css';
-import userIcon from '../../assets/images/img10.jpg';
+
 function Navbar(props) {
+  //console.log(props);
+  // const logoutHandler = () => {
+  //   axios({
+  //     method:"GET",
+  //     url: `${props.SERVER_ADDRESS}logout`
+  //   }).then((response) => {
+  //     console.log(response);
+  //   })
+  // }
   return (
     <>
       <div className='navbar'>
@@ -9,7 +18,7 @@ function Navbar(props) {
         <div
           className='user-icon'
           style={{
-            backgroundImage: `url(${userIcon})`,
+            backgroundImage: `url(${props.userimageUrl})`,
           }}
         ></div>
       </div>
