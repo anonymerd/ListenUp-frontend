@@ -30,12 +30,14 @@ export default class HomePage extends Component {
 
   async componentDidMount() {
     try {
+      const tempresult = await axios.get(`${SERVER_ADDRESS}music`);
       const result = await axios.get(`${SERVER_ADDRESS}music`);
       const musicResult = result.data;
       console.log(musicResult);
 
       this.setState({
         currSong: new Audio(musicResult.streamAddress),
+        // currSong: new Audio('http://localhost:8080/'),
         songName: musicResult.song,
         songArtist: musicResult.artist,
         albumArt: musicResult.thumbnail.url,
@@ -63,7 +65,9 @@ export default class HomePage extends Component {
   };
 
   changeSongTime = (event) => {
-    this.state.currSong.currentTime = '16';
+    console.log(event.target.value);
+    this.state.currSong.currentTime = `${event.target.value}`;
+    console.log(this.state.currSong.currentTime);
   };
 
   changeSongVolume = (event) => {
@@ -106,13 +110,17 @@ export default class HomePage extends Component {
 
   logoutFaliure = (err) => {
     console.log(err);
-  }
+  };
 
   render() {
     return (
       <div class='wrapper'>
-        <Navbar userimageUrl={this.state.profile_pic} SERVER_ADDRESS = 'http://localhost:8000/'
-         logoutSuccess = {this.logoutSuccess} logoutFaliure = {this.logoutFaliure}/>
+        <Navbar
+          userimageUrl={this.state.profile_pic}
+          SERVER_ADDRESS='http://localhost:8000/'
+          logoutSuccess={this.logoutSuccess}
+          logoutFaliure={this.logoutFaliure}
+        />
         <div className='container'>
           <div className='main-section'>
             <section className='main-section-left'>
@@ -137,7 +145,6 @@ export default class HomePage extends Component {
                   />
                   <span>Sign In With Google</span>
                 </GoogleLogin>
-                
               </div>
             </section>
             <section className='main-section-right'>
@@ -166,7 +173,7 @@ export default class HomePage extends Component {
                     clicked={this.toggleSong}
                     currSongTime={this.state.currSongTime}
                     currSongDuration={this.state.currSongDuration}
-                    // slide={this.changeSongTime}
+                    slide={this.changeSongTime}
                     volumeChange={this.changeSongVolume}
                     volume={this.state.currSongVolume}
                   />
