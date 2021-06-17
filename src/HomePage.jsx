@@ -3,6 +3,7 @@ import Navbar from './homepage-component/Navbar/Navbar';
 import Player from './homepage-component/Player/Player';
 import userIcon from './assets/images/img10.jpg';
 import { GoogleLogin } from 'react-google-login';
+import history from './history';
 import { GoogleLogout } from 'react-google-login';
 import './HomePage.css';
 
@@ -12,6 +13,7 @@ import googleIcon from './assets/icons/google-icon.svg';
 const axios = require('axios');
 
 const SERVER_ADDRESS = 'http://localhost:8000/';
+
 
 export default class HomePage extends Component {
   state = {
@@ -26,6 +28,8 @@ export default class HomePage extends Component {
     currSongVolume: 5,
     isLoggedIn: false,
     profile_pic: userIcon,
+    loginButton_style:{display: 'block'},
+    playerButton_style: {display: 'none'},
   };
 
   async componentDidMount() {
@@ -89,6 +93,9 @@ export default class HomePage extends Component {
         console.log('here');
         this.setState({
           profile_pic: data.picture,
+          isLoggedIn: true,
+          loginButton_style:{display: 'none'},
+          playerButton_style: {display: 'block'}
         });
       }
     });
@@ -101,81 +108,93 @@ export default class HomePage extends Component {
 
   logoutSuccess = (res) => {
     console.log('signed out ' + res);
-    this.setState({ profile_pic: userIcon });
+    this.setState({ profile_pic: userIcon, 
+    isLoggedIn: false,
+    loginButton_style:{display: 'block'},
+    playerButton_style: {display: 'none'}
+   });
   };
 
   logoutFaliure = (err) => {
     console.log(err);
   }
 
+  openPlayer = () => {
+    history.push('/player');
+  }
+  
   render() {
     return (
-      <div class='wrapper'>
-        <Navbar userimageUrl={this.state.profile_pic} SERVER_ADDRESS = 'http://localhost:8000/'
-         logoutSuccess = {this.logoutSuccess} logoutFaliure = {this.logoutFaliure}/>
-        <div className='container'>
-          <div className='main-section'>
-            <section className='main-section-left'>
-              <div className='homepage-heading'>Listen to AD free music </div>
-              <div className='homepage-subheading'>
-                All your favourite artists at one spot.
-              </div>
-              <div className='signin-button'>
-                <GoogleLogin
-                  className='google-login-button'
-                  clientId='390511031158-234aa4gmc6oadsj6inuku9hi9f6ug8vq.apps.googleusercontent.com'
-                  onSuccess={this.loginSuccess}
-                  onFailure={this.loginFaliure}
-                  cookiePolicy={'single_host_origin'}
-                  isSignedIn={true}
-                  icon={false}
-                >
-                  <img
-                    src={googleIcon}
-                    alt='Google Icon'
-                    className='google-icon'
-                  />
-                  <span>Sign In With Google</span>
-                </GoogleLogin>
-                
-              </div>
-            </section>
-            <section className='main-section-right'>
-              <div className='right-section-container'>
-                <div className='right-section-popups music-details-container'>
+      <>
+        <div class='wrapper' style={this.state.landingPage_style}>
+          <Navbar userimageUrl={this.state.profile_pic} SERVER_ADDRESS = 'http://localhost:8000/'
+          logoutSuccess = {this.logoutSuccess} logoutFaliure = {this.logoutFaliure}/>
+          <div className='container'>
+            <div className='main-section'>
+              <section className='main-section-left'>
+                <div className='homepage-heading'>Listen to AD free music </div>
+                <div className='homepage-subheading'>
+                  All your favourite artists at one spot.
+                </div>
+                <div className='signin-button' style={this.state.loginButton_style}>
+                  <GoogleLogin
+                    className='google-login-button'
+                    clientId='390511031158-234aa4gmc6oadsj6inuku9hi9f6ug8vq.apps.googleusercontent.com'
+                    onSuccess={this.loginSuccess}
+                    onFailure={this.loginFaliure}
+                    cookiePolicy={'single_host_origin'}
+                    isSignedIn={true}
+                    icon={false}
+                  >
+                    <img
+                      src={googleIcon}
+                      alt='Google Icon'
+                      className='google-icon'
+                    />
+                    <span>Sign In With Google</span>
+                  </GoogleLogin>
+                </div>
+                <div className='player-button'>
+                  <button  onClick={this.openPlayer} style={this.state.playerButton_style}>Go to Player</button>
+                </div>
+              </section>
+              <section className='main-section-right'>
+                <div className='right-section-container'>
+                  <div className='right-section-popups music-details-container'>
+                    <div
+                      className='track-icon'
+                      style={{
+                        backgroundImage: `url(${this.state.albumArt})`,
+                      }}
+                    ></div>
+                    <div className='track-info-container'>
+                      <span className='now-playing'>Now Playing</span>
+                      <span className='track-name'>{this.state.songName}</span>
+                      <span className='artist-name'>{this.state.songArtist}</span>
+                    </div>
+                  </div>
                   <div
-                    className='track-icon'
+                    className='main-image-container'
                     style={{
-                      backgroundImage: `url(${this.state.albumArt})`,
+                      backgroundImage: `url(${mainImage})`,
                     }}
                   ></div>
-                  <div className='track-info-container'>
-                    <span className='now-playing'>Now Playing</span>
-                    <span className='track-name'>{this.state.songName}</span>
-                    <span className='artist-name'>{this.state.songArtist}</span>
+                  <div className='right-section-popups music-player-container'>
+                    <Player
+                      clicked={this.toggleSong}
+                      currSongTime={this.state.currSongTime}
+                      currSongDuration={this.state.currSongDuration}
+                      slide={this.changeSongTime}
+                      volumeChange={this.changeSongVolume}
+                      volume={this.state.currSongVolume}
+                    />
                   </div>
                 </div>
-                <div
-                  className='main-image-container'
-                  style={{
-                    backgroundImage: `url(${mainImage})`,
-                  }}
-                ></div>
-                <div className='right-section-popups music-player-container'>
-                  <Player
-                    clicked={this.toggleSong}
-                    currSongTime={this.state.currSongTime}
-                    currSongDuration={this.state.currSongDuration}
-                    // slide={this.changeSongTime}
-                    volumeChange={this.changeSongVolume}
-                    volume={this.state.currSongVolume}
-                  />
-                </div>
-              </div>
-            </section>
+              </section>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 }
