@@ -68,6 +68,22 @@
   font-weight: 600;
 }
 
+ 
+.main-section .player-button button {
+  text-align: center;
+  display: block;
+  padding: 15px 30px !important;
+  border-radius: 40px !important;
+  width: 70%;
+  background-color: #46a528 !important;
+  color: white !important;
+  font-size: 120% !important;
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  border: none;
+}
+
 .main-section-right .right-section-container .main-image-container {
   height: 70vh;
   width: 70vh;
