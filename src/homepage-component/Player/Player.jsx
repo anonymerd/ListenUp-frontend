@@ -8,7 +8,17 @@ import volumeIconMid from '../../assets/icons/volume-icons/volume-icon-mid.svg';
 import volumeIconMin from '../../assets/icons/volume-icons/volume-icon-min.svg';
 import volumeIconMuted from '../../assets/icons/volume-icons/volume-icon-muted.svg';
 
+// Importing Loader
+import loaderIcon from '../../assets/icons/loader.svg';
+
 const Player = (props) => {
+  // Creating Loader
+  const loader = (
+    <div className='loader-container'>
+      <img src={loaderIcon} alt='Loader Icon' />
+    </div>
+  );
+
   // Function to convert seconds into hh:mm:ss or mm:ss format.
   const formatTime = (time) => {
     const hours = parseInt(time / 3600);
@@ -37,15 +47,16 @@ const Player = (props) => {
     <div className='player-container'>
       {/* Toggle button to play/pause the song */}
 
-      <div className='toggle-btn-contanier'>
-        <div className='btn play' onClick={props.onPlayPause}>
-          <span className='bar bar-1'></span>
-          <span className='bar bar-2'></span>
+      {props.hasSongLoaded ? (
+        <div className='toggle-btn-contanier'>
+          <div className='btn play' onClick={props.onPlayPause}>
+            <span className='bar bar-1'></span>
+            <span className='bar bar-2'></span>
+          </div>
         </div>
-      </div>
-
-      {/* The div which contains the elapsed song time */}
-
+      ) : (
+        loader
+      )}
       <div className='time-container current-song-time'>
         {formatTime(parseInt(props.songTimeElapsed))}
       </div>
@@ -56,10 +67,10 @@ const Player = (props) => {
         <input
           type='range'
           className='player-range'
-          defaultValue={parseInt(props.songTimeElapsed)}
           min='0'
           max={parseInt(props.songDuration)}
           step='1'
+          defaultValue={parseInt(props.songTimeElapsed)}
           onClick={props.onSongSeek}
         />
       </div>
@@ -82,7 +93,7 @@ const Player = (props) => {
           min='0'
           max='10'
           step='1'
-          defaultValue={props.volume}
+          defaultValue='5'
           onChange={props.onVolumeChange}
         />
       </div>

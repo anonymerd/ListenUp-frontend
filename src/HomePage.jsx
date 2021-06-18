@@ -4,7 +4,6 @@ import Player from './homepage-component/Player/Player';
 import userIcon from './assets/images/img10.jpg';
 import { GoogleLogin } from 'react-google-login';
 import history from './history';
-import { GoogleLogout } from 'react-google-login';
 import './HomePage.css';
 
 import mainImage from './assets/images/img12.jpg';
@@ -63,7 +62,7 @@ export default class HomePage extends Component {
           songDuration: this.state.currSong.duration,
           hasSongLoaded: true,
         });
-        this.state.currSong.volume = 0.5;
+        this.state.currSong.volume = this.state.songVolume / 10;
       });
       this.state.currSong.ontimeupdate = () => {
         this.setState({
@@ -104,16 +103,6 @@ export default class HomePage extends Component {
     const seekSlider = event.target;
     this.state.currSong.currentTime = `${seekSlider.value}`;
 
-    this.state.currSong.addEventListener('canplaythrough', () => {
-      this.state.currSong.volume = this.state.songVolume / 10;
-
-      this.state.currSong.ontimeupdate = () => {
-        this.setState({
-          songTimeElapsed: this.state.currSong.currentTime,
-        });
-      };
-    });
-
     this.setState({ songTimeElapsed: this.state.currSong.currentTime });
   };
 
@@ -121,7 +110,7 @@ export default class HomePage extends Component {
   changeSongVolume = (event) => {
     this.state.currSong.volume = event.target.value / 10;
     this.setState({
-      currSongVolume: event.target.value,
+      songVolume: event.target.value,
     });
   };
 
@@ -171,7 +160,7 @@ export default class HomePage extends Component {
   render() {
     return (
       <>
-        <div class='wrapper' style={this.state.landingPage_style}>
+        <div class='wrapper'>
           <Navbar
             isLoggedIn={this.state.isLoggedIn}
             userIcon={this.state.userIcon}
@@ -248,18 +237,15 @@ export default class HomePage extends Component {
                     }}
                   ></div>
                   <div className='right-section-popups music-player-container'>
-                    {this.state.hasSongLoaded ? (
-                      <Player
-                        songTimeElapsed={this.state.songTimeElapsed}
-                        songDuration={this.state.songDuration}
-                        volume={this.state.songVolume}
-                        onPlayPause={this.toggleSong}
-                        onSongSeek={this.changeSongTime}
-                        onVolumeChange={this.changeSongVolume}
-                      />
-                    ) : (
-                      this.loader
-                    )}
+                    <Player
+                      songTimeElapsed={this.state.songTimeElapsed}
+                      songDuration={this.state.songDuration}
+                      volume={this.state.songVolume}
+                      hasSongLoaded={this.state.hasSongLoaded}
+                      onPlayPause={this.toggleSong}
+                      onSongSeek={this.changeSongTime}
+                      onVolumeChange={this.changeSongVolume}
+                    />
                   </div>
                 </div>
               </section>

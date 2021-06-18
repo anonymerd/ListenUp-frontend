@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
-import { useTransition, animated } from 'react-spring';
 
 import './Navbar.css';
 import dropDownIcon from '../../assets/icons/drop-down-arrow.svg';

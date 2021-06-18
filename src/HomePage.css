@@ -113,8 +113,7 @@
   padding: 10px;
 }
 
-.music-details-container .loader-container,
-.music-player-container .loader-container {
+.music-details-container .loader-container {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -162,8 +161,4 @@
   width: 500px;
   transform: translate(180px, -150px);
   padding: 10px;
-}
-
-.music-player-container .loader-container {
-  width: 100%;
 }
