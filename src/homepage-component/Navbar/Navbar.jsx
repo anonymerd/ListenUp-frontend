@@ -7,12 +7,6 @@ import dropDownIcon from '../../assets/icons/drop-down-arrow.svg';
 import googleIcon from '../../assets/icons/google-icon.svg';
 
 const Navbar = (props) => {
-  // const fadeIn = useTransition({
-  //   from: { opacity: 0, height: '0px' },
-  //   enter: { opacity: 1, height: '100px' },
-  //   leave: { opacity: 0, height: '0px' },
-  // });
-
   const dropDown = useRef(null);
 
   let isDisplaying = false;
@@ -64,18 +58,19 @@ const Navbar = (props) => {
           )}
 
           {props.isLoggedIn ? (
-            <div className='dropdown-content' ref={dropDown}>
-              <button>Profile</button>
-              <GoogleLogout
-                className='logout-button'
-                clientId={props.clientId}
-                buttonText='Logout'
-                onLogoutSuccess={props.logoutSuccess}
-                onFailure={props.logoutFaliure}
-                icon={false}
-              >
-                <span>Sign Out</span>
-              </GoogleLogout>
+            <div className='dropdown-container' ref={dropDown}>
+              <div className='dropdown-content'>Profile</div>
+              <div className='dropdown-content'>
+                <GoogleLogout
+                  className='logout-button'
+                  clientId={props.clientId}
+                  onLogoutSuccess={props.onLogoutSuccess}
+                  onFailure={props.onLogoutFaliure}
+                  icon={false}
+                >
+                  Sign Out
+                </GoogleLogout>
+              </div>
             </div>
           ) : null}
         </div>

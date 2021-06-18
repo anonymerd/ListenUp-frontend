@@ -19,6 +19,7 @@ const CLIENT_ID =
 
 export default class HomePage extends Component {
   state = {
+    // Song Details
     currSong: new Audio(),
     hasSongLoaded: false,
     isSongPlaying: false,
@@ -29,11 +30,12 @@ export default class HomePage extends Component {
     songTimeElapsed: 0,
     songDuration: 0,
     songVolume: 5,
-    isLoggedIn: false,
-    userIcon: userIcon,
-    loginButton_style: { display: 'block' },
-    playerButton_style: { display: 'none' },
     streamAddress: '',
+
+    // User Details
+    isLoggedIn: undefined,
+    useName: '',
+    userIcon: userIcon,
   };
 
   loader = (
@@ -75,7 +77,10 @@ export default class HomePage extends Component {
 
   // Event Handler to toggle the song.
   toggleSong = (event) => {
-    const toggleButton = event.target;
+    let toggleButton;
+    if (event.target.classList.contains('bar'))
+      toggleButton = event.target.parentNode;
+    else toggleButton = event.target;
 
     if (this.state.currSong.paused) {
       toggleButton.classList.remove('play');
@@ -98,11 +103,18 @@ export default class HomePage extends Component {
   changeSongTime = (event) => {
     const seekSlider = event.target;
     this.state.currSong.currentTime = `${seekSlider.value}`;
+
+    this.state.currSong.addEventListener('canplaythrough', () => {
+      this.state.currSong.volume = this.state.songVolume / 10;
+
+      this.state.currSong.ontimeupdate = () => {
+        this.setState({
+          songTimeElapsed: this.state.currSong.currentTime,
+        });
+      };
+    });
+
     this.setState({ songTimeElapsed: this.state.currSong.currentTime });
-    // this.state.currSong.ontimeupdate = () => {
-    //   this.setState({
-    //     songTimeElapsed: this.state.currSong.currentTime,
-    //   });
   };
 
   // Event Handler to change song volume.
@@ -127,6 +139,7 @@ export default class HomePage extends Component {
 
       if (data.isEmailVerified === true) {
         this.setState({
+          userName: data.name,
           userIcon: data.userIcon,
           isLoggedIn: true,
         });
@@ -175,32 +188,33 @@ export default class HomePage extends Component {
                 <div className='homepage-subheading'>
                   All your favourite artists at one spot.
                 </div>
-                <div className='signin-button'>
-                  <GoogleLogin
-                    className='google-login-button'
-                    clientId={CLIENT_ID}
-                    onSuccess={this.onLoginSuccess}
-                    onFailure={this.onLoginFaliure}
-                    cookiePolicy={'single_host_origin'}
-                    isSignedIn={true}
-                    icon={false}
-                  >
-                    <img
-                      src={googleIcon}
-                      alt='Google Icon'
-                      className='google-icon'
-                    />
-                    <span>Sign In With Google</span>
-                  </GoogleLogin>
-                </div>
-                <div className='player-button'>
-                  <button
-                    onClick={this.openPlayer}
-                    style={this.state.playerButton_style}
-                  >
-                    Go to Player
-                  </button>
-                </div>
+                {this.state.isLoggedIn ? (
+                  <div className='player-button-container'>
+                    <div className='user-name'>
+                      Welcome {this.state.userName} !
+                    </div>
+                    <button onClick={this.openPlayer}>Go to Player</button>
+                  </div>
+                ) : (
+                  <div className='signin-button'>
+                    <GoogleLogin
+                      className='google-login-button'
+                      clientId={CLIENT_ID}
+                      onSuccess={this.onLoginSuccess}
+                      onFailure={this.onLoginFaliure}
+                      cookiePolicy={'single_host_origin'}
+                      isSignedIn={true}
+                      icon={false}
+                    >
+                      <img
+                        src={googleIcon}
+                        alt='Google Icon'
+                        className='google-icon'
+                      />
+                      <span>Sign In With Google</span>
+                    </GoogleLogin>
+                  </div>
+                )}
               </section>
               <section className='main-section-right'>
                 <div className='right-section-container'>

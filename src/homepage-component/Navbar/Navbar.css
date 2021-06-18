@@ -60,17 +60,54 @@
 .navbar .user-icon-wrapper .user-icon-container .drop-down-icon-container {
   height: 15px;
   width: 15px;
+  user-select: none;
 }
 
-.navbar .user-icon-wrapper .dropdown-content {
+.navbar .user-icon-wrapper .dropdown-container {
   position: absolute;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   padding: 10px;
-  background: yellow;
+  background: none;
   width: 100%;
   visibility: hidden;
+  padding: 10px;
+}
+
+.user-icon-wrapper .dropdown-container .dropdown-content {
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 100%;
+  background: #57534fec;
+  color: white;
+  font-weight: 600;
+  width: 20%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.274);
+  z-index: 100;
+  user-select: none;
+}
+
+.user-icon-wrapper .dropdown-container .dropdown-content .logout-button {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-align: right !important;
+}
+
+.user-icon-wrapper .dropdown-container .dropdown-content .logout-button span {
+  font-family: 'Montserrat', sans-serif !important;
+  color: white !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-weight: 600 !important;
+  font-size: 100% !important;
+}
+
+.dropdown-content button {
+  background: transparent;
 }
 
 .navbar-hr {

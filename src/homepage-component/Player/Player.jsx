@@ -56,10 +56,10 @@ const Player = (props) => {
         <input
           type='range'
           className='player-range'
+          defaultValue={parseInt(props.songTimeElapsed)}
           min='0'
           max={parseInt(props.songDuration)}
           step='1'
-          defaultValue={parseInt(props.songTimeElapsed)}
           onClick={props.onSongSeek}
         />
       </div>
