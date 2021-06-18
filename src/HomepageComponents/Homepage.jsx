@@ -44,14 +44,13 @@ export default class Homepage extends Component {
     </div>
   );
 
-  async componentDidMount() {
+  getRandomSong = async () => {
     try {
       const result = await axios.get(`${SERVER_ADDRESS}/random`);
       const songData = result.data;
 
       this.setState({
         currSong: new Audio(songData.streamAddress),
-        // currSong: new Audio('http://localhost:8080/'),
         songName: songData.song,
         songArtist: songData.artist,
         albumArt: songData.thumbnail.url,
@@ -65,14 +64,27 @@ export default class Homepage extends Component {
         });
         this.state.currSong.volume = this.state.songVolume / 10;
       });
+
+      this.state.currSong.addEventListener('ended', () => {
+        this.setState({
+          hasSongLoaded: false,
+        });
+        this.getRandomSong();
+      });
       this.state.currSong.ontimeupdate = () => {
         this.setState({
           songTimeElapsed: this.state.currSong.currentTime,
         });
       };
+
+      return songData;
     } catch (err) {
       console.log(err);
     }
+  };
+
+  async componentDidMount() {
+    const songData = await this.getRandomSong();
   }
 
   // Event Handler to toggle the song.
