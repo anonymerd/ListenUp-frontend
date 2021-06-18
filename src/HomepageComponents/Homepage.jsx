@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import Navbar from './homepage-component/Navbar/Navbar';
-import Player from './homepage-component/Player/Player';
-import userIcon from './assets/images/img10.jpg';
 import { GoogleLogin } from 'react-google-login';
-import history from './history';
-import './HomePage.css';
 
-import mainImage from './assets/images/img12.jpg';
-import googleIcon from './assets/icons/google-icon.svg';
-import loaderIcon from './assets/icons/loader.svg';
+import Navbar from './Navbar/Navbar';
+import Player from './Player/Player';
+import history from '../history';
+import './Homepage.css';
+
+import userIcon from '../assets/images/img10.jpg';
+import mainImage from '../assets/images/img12.jpg';
+import googleIcon from '../assets/icons/google-icon.svg';
+import loaderIcon from '../assets/icons/loader.svg';
 
 const axios = require('axios');
 
@@ -16,7 +17,7 @@ const SERVER_ADDRESS = 'http://localhost:8000/api';
 const CLIENT_ID =
   '390511031158-234aa4gmc6oadsj6inuku9hi9f6ug8vq.apps.googleusercontent.com';
 
-export default class HomePage extends Component {
+export default class Homepage extends Component {
   state = {
     // Song Details
     currSong: new Audio(),

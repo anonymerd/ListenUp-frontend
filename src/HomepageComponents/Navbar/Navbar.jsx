@@ -1,21 +1,23 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 
 import './Navbar.css';
+
+// Importing Icons
 import dropDownIcon from '../../assets/icons/drop-down-arrow.svg';
 import googleIcon from '../../assets/icons/google-icon.svg';
 
 const Navbar = (props) => {
-  const dropDown = useRef(null);
+  const [isDropdownVisible, setDropDownVisibility] = useState(false);
 
-  let isDisplaying = false;
   const toggleDropDown = () => {
-    if (isDisplaying) {
-      isDisplaying = false;
-      dropDown.current.style.visibility = 'hidden';
+    if (isDropdownVisible) {
+      console.log(isDropdownVisible);
+      setDropDownVisibility(false);
     } else {
-      isDisplaying = true;
-      dropDown.current.style.visibility = 'visible';
+      console.log(isDropdownVisible);
+
+      setDropDownVisibility(true);
     }
   };
   return (
@@ -56,8 +58,10 @@ const Navbar = (props) => {
             </div>
           )}
 
-          {props.isLoggedIn ? (
-            <div className='dropdown-container' ref={dropDown}>
+          {/* DropDown that contains logout button */}
+
+          {isDropdownVisible ? (
+            <div className='dropdown-container'>
               <div className='dropdown-content'>Profile</div>
               <div className='dropdown-content'>
                 <GoogleLogout
