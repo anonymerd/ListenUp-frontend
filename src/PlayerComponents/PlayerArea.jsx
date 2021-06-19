@@ -5,10 +5,10 @@ import searchIcon from '../assets/icons/search_icon.png';
 import thumbnail from '../assets/images/img1.jpg';
 import history from '../history';
 import Player from '../homepage-component/Player/Player';
-import Options from './player-components/Options';
-import List from './player-components/List';
+import Options from '../PlayerComponents/player-components/Options';
+import List from '../PlayerComponents/player-components/List';
 
-export default class MainPlayer extends Component {
+export default class PlayerArea extends Component {
 
     state = {
         musicListSaved: []
