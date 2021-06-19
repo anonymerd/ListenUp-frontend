@@ -3,6 +3,7 @@
 
 .wrapper {
   background-image: radial-gradient(circle, #3c3939, #221e1d);
+  background-size: cover;
   width: 100vw;
   height: 100vh;
 }

@@ -120,13 +120,17 @@ export default class HomePage extends Component {
   }
 
   openPlayer = () => {
-    history.push('/player');
+    if(this.state.isLoggedIn === true)
+      history.push('/player');
+    else {
+      window.alert('LOGIN FIRST');
+    }
   }
   
   render() {
     return (
       <>
-        <div class='wrapper' style={this.state.landingPage_style}>
+        <div class='wrapper'>
           <Navbar userimageUrl={this.state.profile_pic} SERVER_ADDRESS = 'http://localhost:8000/'
           logoutSuccess = {this.logoutSuccess} logoutFaliure = {this.logoutFaliure}/>
           <div className='container'>
