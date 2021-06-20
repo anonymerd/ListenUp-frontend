@@ -44,7 +44,10 @@ const MainPlayer = (props) => {
     <div className='main-player-container'>
       <div className='player-controls-container'>
         <div className='left-side-controls-container'>
-          <div className='song-duration-container'>0:06 / 6:09</div>
+          <div className='song-duration-container'>
+            {formatTime(parseInt(props.songTimeElapsed))} /{' '}
+            {formatTime(parseInt(props.songDuration))}
+          </div>
           <div className='btn-container like-btn-container'>
             <img src={likeIcon} alt='Like Icon' />
           </div>
@@ -83,8 +86,8 @@ const MainPlayer = (props) => {
               min='0'
               max='10'
               step='1'
-              defaultValue='5'
-              // onChange={props.onVolumeChange}
+              defaultValue={props.volume}
+              onChange={props.onVolumeChange}
             />
           </div>
         </div>
@@ -94,10 +97,10 @@ const MainPlayer = (props) => {
           type='range'
           className='player-range'
           min='0'
-          max='100'
+          max={parseInt(props.songDuration)}
           step='1'
-          defaultValue='69'
-          // onClick={props.onSongSeek}
+          defaultValue={parseInt(props.songTimeElapsed)}
+          onClick={props.onSongSeek}
         />
       </div>
     </div>
