@@ -4,8 +4,7 @@ import homeIcon from '../assets/icons/home_icon.png';
 import searchIcon from '../assets/icons/search_icon.png';
 import thumbnail from '../assets/images/img1.jpg';
 import history from '../history';
-import Player from '../HomepageComponents/Player/Player';
-import Options from './Options/Options';
+import MainPlayer from './MainPlayer/MainPlayer';
 import List from './List/List';
 
 export default class PlayerArea extends Component {
@@ -96,7 +95,7 @@ export default class PlayerArea extends Component {
             <div className='song-name'>The Slim Shady</div>
           </div>
           <div className='main-player-container'>
-            <Player />
+            <MainPlayer></MainPlayer>
           </div>
         </div>
         <div className='right-section'>

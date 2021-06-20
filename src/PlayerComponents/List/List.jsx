@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './List.css';
 
-import likeIcon from '../../assets/icons/like-icon.svg';
+import likeIcon from '../../assets/icons/player-icons/like-icon.svg';
 
 const List = (props) => {
   return (
