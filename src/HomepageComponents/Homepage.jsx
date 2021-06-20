@@ -167,6 +167,7 @@ export default class Homepage extends Component {
   };
 
   openPlayer = () => {
+    this.state.currSong.pause();
     history.push('/player');
   };
 
