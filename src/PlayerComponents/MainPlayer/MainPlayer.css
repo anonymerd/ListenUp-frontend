@@ -1,0 +1,118 @@
+.main-player-container {
+  width: 100%;
+  color: white;
+}
+
+.main-player-container .player-controls-container {
+  width: 100%;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main-player-container .btn-container {
+  width: 20px;
+  height: 20px;
+}
+
+.main-player-container
+  .player-controls-container
+  .left-side-controls-container {
+  width: 20%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main-player-container .player-controls-container .song-btn-container {
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+}
+
+.main-player-container
+  .player-controls-container
+  .song-btn-container
+  .prev-btn-container,
+.main-player-container
+  .player-controls-container
+  .song-btn-container
+  .next-btn-container {
+  width: 40px;
+  height: 40px;
+}
+
+.main-player-container
+  .player-controls-container
+  .right-side-controls-container {
+  width: 20%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main-player-container
+  .player-controls-container
+  .right-side-controls-container
+  .song-volume-container {
+  display: flex;
+  gap: 10px;
+}
+
+.main-player-container .song-range-container {
+  width: 100%;
+}
+
+.main-player-container .song-range-container .player-range {
+  width: 100%;
+}
+
+/* .btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border: white 3px solid;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border 0.1s ease-in-out;
+}
+
+.btn:hover {
+  border: #333 3px solid;
+}
+
+.btn:hover .bar {
+  background-color: #333;
+}
+
+.btn .bar {
+  display: inline-block;
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 3px;
+  height: 20px;
+  border-radius: 3px;
+  background-color: white;
+  transform-origin: center;
+  transition: transform 0.4s ease-in-out, background 0.1s ease-in-out;
+}
+
+.btn.pause .bar-1 {
+  transform: translateX(13.5px) translateY(0px) rotate(0deg);
+}
+
+.btn.pause .bar-2 {
+  transform: translateX(24px) translateY(0px) rotate(0deg);
+}
+
+.btn.play .bar-1 {
+  transform: translateX(20px) translateY(-5px) rotate(-55deg);
+}
+
+.btn.play .bar-2 {
+  transform: translateX(20px) translateY(5px) rotate(-125deg);
+} */

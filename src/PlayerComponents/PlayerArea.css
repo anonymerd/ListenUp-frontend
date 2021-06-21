@@ -1,0 +1,109 @@
+.player-area-wrapper {
+  background-image: linear-gradient(
+      rgba(30, 30, 30, 0.8),
+      rgba(30, 30, 30, 0.8)
+    ),
+    url('../assets/images/player-area-background.jpg');
+  height: 100vh;
+  width: 100vw;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+}
+
+.player-area-wrapper .left-section {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-area-wrapper .left-section .home-button-container {
+  flex-grow: 0;
+}
+
+.player-area-wrapper .left-section .home-button-container img {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: inline-block;
+  margin: 50px;
+}
+
+.player-area-wrapper .left-section .song-info-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.player-area-wrapper .left-section .song-info-container .song-thumbnail {
+  border-radius: 50%;
+  width: 200px;
+  height: 200px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.player-area-wrapper .left-section .song-info-container .artist-name {
+  font-size: 150%;
+  font-weight: 400;
+  margin: 10px 0;
+}
+
+.player-area-wrapper .left-section .song-info-container .song-name {
+  font-size: 200%;
+  font-weight: 500;
+}
+
+.player-area-wrapper .left-section .main-player-container {
+  width: 90%;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.player-area-wrapper .right-section {
+  background-image: linear-gradient(
+    rgba(25, 25, 25, 0.6),
+    rgba(25, 25, 25, 0.6)
+  );
+  min-width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-area-wrapper .right-section .search-bar-container {
+  padding: 10px 0;
+  margin: 10px 0;
+  width: 80%;
+  border-bottom: 1.5px solid white;
+}
+.player-area-wrapper .right-section .search-bar-container .search-box {
+  width: 70%;
+  border: none;
+  background-color: transparent;
+  color: white;
+  font-size: 100%;
+  padding: 15px;
+  margin: 5px;
+}
+
+.right-section .search-box:focus {
+  outline: none;
+}
+
+.right-section .search-bar-container .search-button {
+  display: inline;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.right-section .search-results {
+  padding: 20px 0;
+  width: 100%;
+  overflow: auto;
+}

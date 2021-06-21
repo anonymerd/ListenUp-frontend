@@ -1,109 +1,216 @@
 import React, { Component } from 'react';
-import './MainPlayer.css';
+import './PlayerArea.css';
 import homeIcon from '../assets/icons/home_icon.png';
 import searchIcon from '../assets/icons/search_icon.png';
 import thumbnail from '../assets/images/img1.jpg';
 import history from '../history';
+<<<<<<< HEAD
 import Player from '../HomepageComponents/Player/Player';
 import Options from './player-components/Options';
 import List from './player-components/List';
+=======
+import MainPlayer from './MainPlayer/MainPlayer';
+import SongCard from './SongCard/SongCard';
+
+const axios = require('axios');
+
+const SERVER_ADDRESS = 'http://localhost:8000/api';
+>>>>>>> 0db441ae624ed6232b5c34b405af27eddc3cdfd9
 
 export default class PlayerArea extends Component {
+  state = {
+    currSong: null,
+    isSongPlaying: false,
+    hasSongLoaded: false,
+    songId: '',
+    songName: '',
+    songArtist: '',
+    songThumbnail: '',
+    streamAddress: '',
+    songTimeElapsed: 0,
+    songDuration: 0,
+    songVolume: 5,
+    searchResults: [],
+    recommendedSongs: [],
 
-    state = {
-        musicListSaved: []
-    }
+    searchInput: '',
+  };
 
-    switchPage = () => {
-        history.push('/');
-    }
+  // Event handler to update input value.
+  updateSearchInput = (event) => {
+    this.setState({
+      searchInput: event.target.value,
+    });
+  };
 
-    // functions for button Component sent in props to Options.jsx
-    showSaved = () => {
-        console.log('bkc');
-        var savedArray = [];
-        savedArray.push(
-            {
-                songName: 'chal hat behen ki lodi',
-                artistName: 'rohit bisht',
-                songThumbnail: 'https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_auto:good%2Cw_300/MTQ3NjM5MTEzMTc5MjEwODI2/eminem_photo_by_dave_j_hogan_getty_images_entertainment_getty_187596325.jpg'
-            }
+  playSong = async (songData) => {
+    console.log(songData);
+    if (this.state.currSong) this.state.currSong.pause();
+    await this.setState({
+      currSong: new Audio(songData.streamAddress),
+      songId: songData.songId,
+      songName: songData.songName,
+      songArtist: songData.songArtist,
+      songThumbnail: songData.songThumbnail,
+      streamAddress: songData.streamAddress,
+    });
+
+    this.state.currSong.addEventListener('canplaythrough', () => {
+      this.setState({
+        songDuration: this.state.currSong.duration,
+        hasSongLoaded: true,
+      });
+      this.state.currSong.volume = this.state.songVolume / 10;
+      this.state.currSong.play();
+    });
+
+    this.state.currSong.addEventListener('ended', () => {
+      this.setState({
+        hasSongLoaded: false,
+      });
+      this.getRandomSong();
+    });
+    this.state.currSong.ontimeupdate = () => {
+      this.setState({
+        songTimeElapsed: this.state.currSong.currentTime,
+      });
+    };
+
+    this.getRecommendedSongs(songData.songId);
+  };
+
+  getRecommendedSongs = async (songId) => {
+    const response = await axios(`${SERVER_ADDRESS}/suggestions/${songId}`);
+    await this.setState({
+      recommendedSongs: response.data,
+    });
+
+    console.log(response.data);
+  };
+
+  getSearchResults = async () => {
+    if (this.state.searchInput) {
+      try {
+        const response = await axios(
+          `${SERVER_ADDRESS}/search?q=${this.state.searchInput}`
         );
-        savedArray.push(
-            {
-                songName: 'chal hat behen ki lodi part-2',
-                artistName: 'rohit bisht',
-                songThumbnail: 'https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_auto:good%2Cw_300/MTQ3NjM5MTEzMTc5MjEwODI2/eminem_photo_by_dave_j_hogan_getty_images_entertainment_getty_187596325.jpg'
-            }
-        );
-        savedArray.push(
-            {
-                songName: 'chal hat behen ki lodi part-3 deluxe',
-                artistName: 'rohit bisht',
-                songThumbnail: 'https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_auto:good%2Cw_300/MTQ3NjM5MTEzMTc5MjEwODI2/eminem_photo_by_dave_j_hogan_getty_images_entertainment_getty_187596325.jpg'
-            }
-        );
-        this.setState({
-            musicListSaved:savedArray
-        });
-    }
-    showRecommended = () => {
-        console.log('bkc2');
-    }
-    showShared = () => {
-        console.log('bkc3');
-    }
 
-    render() {
+        console.log(response);
 
-        const musicSaved = [];
-        const savedListObj = this.state.musicListSaved;
-        for(var i=0;i<savedListObj.length; i++) {
-            musicSaved.push(<List songName={savedListObj[i].songName}
-            artistName={savedListObj[i].artistName}
-            thumbnail={savedListObj[i].songThumbnail}
-            />);
+        if (response.data.success) {
+          // Rendering Search Results
+          this.setState({
+            searchResults: response.data.searchResults,
+          });
+        } else {
+          console.log(response.message);
         }
-        return (
-           <div className="player-wrapper">
-               <div className="inner-wrapper">
-                   <div className="left-section">
-                        <div className="home-button">
-                            <img src={homeIcon} width="20px" onClick={this.switchPage}/>
-                        </div>
-                        <div className="music-info"> 
-                            <div className="thumbnail" style={{backgroundImage: `url(${thumbnail})`}}></div>
-                            <div className="artist-name">
-                                Eminem
-                            </div>
-                            <div className="song-name">
-                                The Slim Shady
-                            </div>
-                        </div>
-                        <div className="player">
-                            <Player/>
-                        </div>
-                   </div>
-                   <div className="right-section">
-                        <div className="search-bar">
-                            <form action='#'>
-                                <input type="text" placeholder="Search for Songs!" className="search-box"></input>
-                                <button className="search-button">
-                                    <img src={searchIcon} width="18px"/>
-                                </button>
-                            </form>
-                        </div>
-                        <div className="options">
-                            <Options value = "saved" func = {this.showSaved}/> 
-                            <Options value = "Recommended" func = {this.showRecommended}/>
-                            <Options value = "Shared" func = {this.showShared}/>
-                        </div>
-                        <div className="lists">
-                            {musicSaved}
-                        </div>
-                   </div>   
-               </div>
-           </div>
-        );
+      } catch (error) {
+        console.error(error);
+      }
     }
+  };
+
+  // Event Handler to toggle the song.
+  toggleSong = (event) => {
+    let toggleButton;
+    if (event.target.classList.contains('bar'))
+      toggleButton = event.target.parentNode;
+    else toggleButton = event.target;
+
+    if (this.state.currSong.paused) {
+      toggleButton.classList.remove('play');
+      toggleButton.classList.add('pause');
+      this.state.currSong.play();
+      this.setState({
+        isSongPlaying: true,
+      });
+    } else {
+      toggleButton.classList.remove('pause');
+      toggleButton.classList.add('play');
+      this.state.currSong.pause();
+      this.setState({
+        isSongPlaying: false,
+      });
+    }
+  };
+
+  // Event Handler to change song time.
+  changeSongTime = (event) => {
+    const seekSlider = event.target;
+    this.state.currSong.currentTime = `${seekSlider.value}`;
+
+    this.setState({ songTimeElapsed: this.state.currSong.currentTime });
+  };
+
+  // Event Handler to change song volume.
+  changeSongVolume = (event) => {
+    this.state.currSong.volume = event.target.value / 10;
+    this.setState({
+      songVolume: event.target.value,
+    });
+  };
+
+  switchPage = () => {
+    history.push('/');
+  };
+
+  render() {
+    return (
+      <div className='player-area-wrapper'>
+        <div className='left-section'>
+          <div className='home-button-container'>
+            <img src={homeIcon} onClick={this.switchPage} />
+          </div>
+          <div className='song-info-container'>
+            <div
+              className='song-thumbnail'
+              style={{ backgroundImage: `url(${this.state.songThumbnail}` }}
+            ></div>
+            <div className='artist-name'>{this.state.songArtist}</div>
+            <div className='song-name'>{this.state.songName}</div>
+          </div>
+          <div className='main-player-container'>
+            <MainPlayer
+              songTimeElapsed={this.state.songTimeElapsed}
+              songDuration={this.state.songDuration}
+              volume={this.state.songVolume}
+              hasSongLoaded={this.state.hasSongLoaded}
+              onPlayPause={this.toggleSong}
+              onSongSeek={this.changeSongTime}
+              onVolumeChange={this.changeSongVolume}
+            />
+          </div>
+        </div>
+        <div className='right-section'>
+          <div className='search-bar-container'>
+            <input
+              type='text'
+              placeholder='Search for Songs!'
+              className='search-box'
+              onChange={this.updateSearchInput}
+            ></input>
+            <div className='search-button' onClick={this.getSearchResults}>
+              <img src={searchIcon} width='18px' />
+            </div>
+          </div>
+          <div className='search-results'>
+            {this.state.searchResults.map((song, idx) => {
+              return (
+                <SongCard
+                  songName={song.song}
+                  artistName={song.artist}
+                  songThumbnail={song.thumbnail.url}
+                  songStream={song.streamAddress}
+                  key={song.songId}
+                  id={song.songId}
+                  onClick={this.playSong}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
 }

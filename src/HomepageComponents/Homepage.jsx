@@ -30,7 +30,6 @@ export default class Homepage extends Component {
     songTimeElapsed: 0,
     songDuration: 0,
     songVolume: 5,
-    streamAddress: '',
 
     // User Details
     isLoggedIn: undefined,
@@ -49,7 +48,7 @@ export default class Homepage extends Component {
       const result = await axios.get(`${SERVER_ADDRESS}/random`);
       const songData = result.data;
 
-      this.setState({
+      await this.setState({
         currSong: new Audio(songData.streamAddress),
         songName: songData.song,
         songArtist: songData.artist,
@@ -167,6 +166,7 @@ export default class Homepage extends Component {
   };
 
   openPlayer = () => {
+    this.state.currSong.pause();
     history.push('/player');
   };
 
