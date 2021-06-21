@@ -4,18 +4,12 @@ import homeIcon from '../assets/icons/home_icon.png';
 import searchIcon from '../assets/icons/search_icon.png';
 import thumbnail from '../assets/images/img1.jpg';
 import history from '../history';
-<<<<<<< HEAD
-import Player from '../HomepageComponents/Player/Player';
-import Options from './player-components/Options';
-import List from './player-components/List';
-=======
 import MainPlayer from './MainPlayer/MainPlayer';
 import SongCard from './SongCard/SongCard';
 
 const axios = require('axios');
 
 const SERVER_ADDRESS = 'http://localhost:8000/api';
->>>>>>> 0db441ae624ed6232b5c34b405af27eddc3cdfd9
 
 export default class PlayerArea extends Component {
   state = {
@@ -151,6 +145,24 @@ export default class PlayerArea extends Component {
     });
   };
 
+  //event handler for adding liked songs to database
+
+  likedSong = async () => {
+
+    console.log('done');
+    const response = await axios({
+      method: 'POST',
+      url: `${SERVER_ADDRESS}/likedSongs`,
+      data: {
+
+        songName: this.state.songName,
+        artistName: this.state.artistName,
+        thumbnail: this.state.songThumbnail
+      }
+    });
+
+  }
+
   switchPage = () => {
     history.push('/');
   };
@@ -179,6 +191,7 @@ export default class PlayerArea extends Component {
               onPlayPause={this.toggleSong}
               onSongSeek={this.changeSongTime}
               onVolumeChange={this.changeSongVolume}
+              likedSong={this.likedSong}
             />
           </div>
         </div>
@@ -205,6 +218,7 @@ export default class PlayerArea extends Component {
                   key={song.songId}
                   id={song.songId}
                   onClick={this.playSong}
+                  likedSong = {this.likedSong}
                 />
               );
             })}

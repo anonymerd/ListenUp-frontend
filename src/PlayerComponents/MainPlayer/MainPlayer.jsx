@@ -48,7 +48,7 @@ const MainPlayer = (props) => {
             {formatTime(parseInt(props.songTimeElapsed))} /{' '}
             {formatTime(parseInt(props.songDuration))}
           </div>
-          <div className='btn-container like-btn-container'>
+          <div className='btn-container like-btn-container' onClick={props.likedSong}>
             <img src={likeIcon} alt='Like Icon' />
           </div>
           <div className='btn-container shuffle-btn-container'>
