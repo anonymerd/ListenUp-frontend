@@ -4,9 +4,9 @@ import homeIcon from '../assets/icons/home_icon.png';
 import searchIcon from '../assets/icons/search_icon.png';
 import thumbnail from '../assets/images/img1.jpg';
 import history from '../history';
-import Player from '../homepage-component/Player/Player';
-import Options from '../PlayerComponents/player-components/Options';
-import List from '../PlayerComponents/player-components/List';
+import Player from '../HomepageComponents/Player/Player';
+import Options from './player-components/Options';
+import List from './player-components/List';
 
 export default class PlayerArea extends Component {
 
