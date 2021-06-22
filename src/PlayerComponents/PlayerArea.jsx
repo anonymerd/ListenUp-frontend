@@ -13,7 +13,7 @@ const SERVER_ADDRESS = 'http://localhost:8000/api';
 
 export default class PlayerArea extends Component {
   state = {
-    currSong: null,
+    currSong: new Audio(),
     isSongPlaying: false,
     hasSongLoaded: false,
     songId: '',
@@ -135,6 +135,7 @@ export default class PlayerArea extends Component {
     this.state.currSong.currentTime = `${seekSlider.value}`;
 
     this.setState({ songTimeElapsed: this.state.currSong.currentTime });
+    event.target.defaultValue = this.state.songTimeElapsed;
   };
 
   // Event Handler to change song volume.
@@ -188,7 +189,12 @@ export default class PlayerArea extends Component {
               <img src={searchIcon} width='18px' />
             </div>
           </div>
-          <div className='search-results'>
+          <div className='buttons-container'>
+            <div className='option option-search'>Search</div>
+            <div className='option option-recommended'>Recommended</div>
+            <div className='option option-liked'>Liked</div>
+          </div>
+          <div className='song-list-container'>
             {this.state.searchResults.map((song, idx) => {
               return (
                 <SongCard

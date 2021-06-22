@@ -107,3 +107,18 @@
   width: 100%;
   overflow: auto;
 }
+
+.right-section .buttons-container {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  gap: 10px;
+}
+
+.right-section .buttons-container .option {
+  border: 1px solid white;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
