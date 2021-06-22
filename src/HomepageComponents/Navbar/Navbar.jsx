@@ -60,7 +60,7 @@ const Navbar = (props) => {
 
           {/* DropDown that contains logout button */}
 
-          {isDropdownVisible ? (
+          {props.isLoggedIn && isDropdownVisible ? (
             <div className='dropdown-container'>
               <div className='dropdown-content'>Profile</div>
               <div className='dropdown-content'>

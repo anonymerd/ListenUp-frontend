@@ -26,6 +26,7 @@ export default class PlayerArea extends Component {
     songVolume: 5,
     searchResults: [],
     recommendedSongs: [],
+    songList: [],
 
     searchInput: '',
   };
@@ -95,6 +96,7 @@ export default class PlayerArea extends Component {
           // Rendering Search Results
           this.setState({
             searchResults: response.data.searchResults,
+            songList: response.data.searchResults,
           });
         } else {
           console.log(response.message);
@@ -190,12 +192,30 @@ export default class PlayerArea extends Component {
             </div>
           </div>
           <div className='buttons-container'>
-            <div className='option option-search'>Search</div>
-            <div className='option option-recommended'>Recommended</div>
+            <div
+              className='option option-search'
+              onClick={() => {
+                this.setState({
+                  songList: this.state.searchResults,
+                });
+              }}
+            >
+              Search
+            </div>
+            <div
+              className='option option-recommended'
+              onClick={() => {
+                this.setState({
+                  songList: this.state.recommendedSongs,
+                });
+              }}
+            >
+              Recommended
+            </div>
             <div className='option option-liked'>Liked</div>
           </div>
           <div className='song-list-container'>
-            {this.state.searchResults.map((song, idx) => {
+            {this.state.songList.map((song) => {
               return (
                 <SongCard
                   songName={song.song}
