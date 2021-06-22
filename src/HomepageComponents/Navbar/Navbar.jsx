@@ -67,7 +67,10 @@ const Navbar = (props) => {
                 <GoogleLogout
                   className='logout-button'
                   clientId={props.clientId}
-                  onLogoutSuccess={props.onLogoutSuccess}
+                  onLogoutSuccess={() => {
+                    toggleDropDown();
+                    props.onLogoutSuccess();
+                  }}
                   onFailure={props.onLogoutFaliure}
                   icon={false}
                 >
