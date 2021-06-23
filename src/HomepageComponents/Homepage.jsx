@@ -34,7 +34,7 @@ export default class Homepage extends Component {
     songVolume: 5,
 
     // User Details
-    isLoggedIn: undefined,
+    isLoggedIn: false,
     useName: '',
     userIcon: userIcon,
   };
@@ -158,7 +158,7 @@ export default class Homepage extends Component {
   };
 
   onLogoutSuccess = (res) => {
-    console.log('signed out ' + res);
+    // console.log('signed out ' + res);
     this.setState({
       isLoggedIn: false,
     });
