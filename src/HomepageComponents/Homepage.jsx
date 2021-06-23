@@ -17,6 +17,8 @@ const SERVER_ADDRESS = 'http://localhost:8000/api';
 const CLIENT_ID =
   '390511031158-234aa4gmc6oadsj6inuku9hi9f6ug8vq.apps.googleusercontent.com';
 
+var email = '';
+
 export default class Homepage extends Component {
   state = {
     // Song Details
@@ -139,6 +141,7 @@ export default class Homepage extends Component {
       console.log(data);
 
       if (data.isEmailVerified === true) {
+        email = data.email
         this.setState({
           userName: data.name,
           userIcon: data.userIcon,
@@ -269,3 +272,5 @@ export default class Homepage extends Component {
     );
   }
 }
+
+export {email};

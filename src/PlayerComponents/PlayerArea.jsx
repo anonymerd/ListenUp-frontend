@@ -7,6 +7,8 @@ import history from '../history';
 import MainPlayer from './MainPlayer/MainPlayer';
 import SongCard from './SongCard/SongCard';
 
+import {email} from '../HomepageComponents/Homepage';
+
 const axios = require('axios');
 
 const SERVER_ADDRESS = 'http://localhost:8000/api';
@@ -150,17 +152,16 @@ export default class PlayerArea extends Component {
   likedSong = async () => {
 
     console.log('done');
+    console.log(email);
     const response = await axios({
       method: 'POST',
       url: `${SERVER_ADDRESS}/likedSongs`,
       data: {
-
-        songName: this.state.songName,
-        artistName: this.state.artistName,
-        thumbnail: this.state.songThumbnail
+        email: email,
+        songName: this.state.songName
       }
     });
-
+    console.log(response);
   }
 
   switchPage = () => {
