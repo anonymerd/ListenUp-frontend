@@ -102,12 +102,6 @@
   cursor: pointer;
 }
 
-.right-section .search-results {
-  padding: 20px 0;
-  width: 100%;
-  overflow: auto;
-}
-
 .right-section .buttons-container {
   padding: 10px;
   display: flex;
@@ -121,4 +115,10 @@
   border: 1px solid white;
   border-radius: 5px;
   padding: 5px 10px;
+}
+
+.right-section .song-list-container {
+  padding: 20px 0;
+  width: 100%;
+  overflow: auto;
 }
