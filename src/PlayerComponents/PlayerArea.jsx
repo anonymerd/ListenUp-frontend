@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './PlayerArea.css';
 import homeIcon from '../assets/icons/home_icon.png';
 import searchIcon from '../assets/icons/search_icon.png';
-import thumbnail from '../assets/images/img1.jpg';
 import history from '../history';
 import MainPlayer from './MainPlayer/MainPlayer';
 import SongCard from './SongCard/SongCard';
@@ -71,13 +70,13 @@ export default class PlayerArea extends Component {
       });
     };
 
-    this.getRecommendedSongs(songData.songId);
+    await this.getRecommendedSongs(songData.songId);
   };
 
   getRecommendedSongs = async (songId) => {
     const response = await axios(`${SERVER_ADDRESS}/suggestions/${songId}`);
     await this.setState({
-      recommendedSongs: response.data,
+      recommendedSongs: response.data.suggestions,
     });
 
     console.log(response.data);
