@@ -24,9 +24,9 @@ const List = (props) => {
         <div className='music-info'>
           <div className='song-name'>{props.songName}</div>
           <div className='artist-name'>{props.artistName}</div>
-          <div className='like-icon-container'>
+          <button className='like-icon-container' onClick={props.likedSong}>
             <img src={likeIcon} alt='Like Icon' />
-          </div>
+          </button>
         </div>
       </div>
     </>

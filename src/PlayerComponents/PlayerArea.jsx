@@ -6,6 +6,8 @@ import history from '../history';
 import MainPlayer from './MainPlayer/MainPlayer';
 import SongCard from './SongCard/SongCard';
 
+import {email} from '../HomepageComponents/Homepage';
+
 const axios = require('axios');
 
 const SERVER_ADDRESS = 'http://localhost:8000/api';
@@ -147,6 +149,23 @@ export default class PlayerArea extends Component {
     });
   };
 
+  //event handler for adding liked songs to database
+
+  likedSong = async () => {
+
+    console.log('done');
+    console.log(email);
+    const response = await axios({
+      method: 'POST',
+      url: `${SERVER_ADDRESS}/likedSongs`,
+      data: {
+        email: email,
+        songName: this.state.songName
+      }
+    });
+    console.log(response);
+  }
+
   switchPage = () => {
     history.push('/');
   };
@@ -175,6 +194,7 @@ export default class PlayerArea extends Component {
               onPlayPause={this.toggleSong}
               onSongSeek={this.changeSongTime}
               onVolumeChange={this.changeSongVolume}
+              likedSong={this.likedSong}
             />
           </div>
         </div>
@@ -224,6 +244,7 @@ export default class PlayerArea extends Component {
                   key={song.songId}
                   id={song.songId}
                   onClick={this.playSong}
+                  likedSong = {this.likedSong}
                 />
               );
             })}

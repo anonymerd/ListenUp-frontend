@@ -10,6 +10,11 @@ import googleIcon from '../../assets/icons/google-icon.svg';
 const Navbar = (props) => {
   const [isDropdownVisible, setDropDownVisibility] = useState(false);
 
+  // const checkLogin = () => {
+  //   console.log(setDropDownVisibility); 
+  //   setDropDownVisibility(false);
+  // }
+
   const toggleDropDown = () => {
     if (isDropdownVisible) {
       console.log(isDropdownVisible);
@@ -73,6 +78,7 @@ const Navbar = (props) => {
                   }}
                   onFailure={props.onLogoutFaliure}
                   icon={false}
+                  
                 >
                   Sign Out
                 </GoogleLogout>
