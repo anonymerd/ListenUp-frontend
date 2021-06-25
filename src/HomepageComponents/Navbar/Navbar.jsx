@@ -10,10 +10,10 @@ import googleIcon from '../../assets/icons/google-icon.svg';
 const Navbar = (props) => {
   const [isDropdownVisible, setDropDownVisibility] = useState(false);
 
-  const checkLogin = () => {
-    console.log(setDropDownVisibility); 
-    setDropDownVisibility(false);
-  }
+  // const checkLogin = () => {
+  //   console.log(setDropDownVisibility); 
+  //   setDropDownVisibility(false);
+  // }
 
   const toggleDropDown = () => {
     if (isDropdownVisible) {
@@ -68,7 +68,7 @@ const Navbar = (props) => {
           {isDropdownVisible ? (
             <div className='dropdown-container'>
               <div className='dropdown-content'>Profile</div>
-              <div className='dropdown-content' onClick= {checkLogin}>
+              <div className='dropdown-content'>
                 <GoogleLogout
                   className='logout-button'
                   clientId={props.clientId}
