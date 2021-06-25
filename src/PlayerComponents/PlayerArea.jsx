@@ -6,7 +6,7 @@ import history from '../history';
 import MainPlayer from './MainPlayer/MainPlayer';
 import SongCard from './SongCard/SongCard';
 
-import {email} from '../HomepageComponents/Homepage';
+import { email } from '../HomepageComponents/Homepage';
 
 const axios = require('axios');
 
@@ -152,7 +152,6 @@ export default class PlayerArea extends Component {
   //event handler for adding liked songs to database
 
   likedSong = async () => {
-
     console.log('done');
     console.log(email);
     const response = await axios({
@@ -160,11 +159,11 @@ export default class PlayerArea extends Component {
       url: `${SERVER_ADDRESS}/likedSongs`,
       data: {
         email: email,
-        songName: this.state.songName
-      }
+        songName: this.state.songName,
+      },
     });
     console.log(response);
-  }
+  };
 
   switchPage = () => {
     history.push('/');
@@ -173,82 +172,84 @@ export default class PlayerArea extends Component {
   render() {
     return (
       <div className='player-area-wrapper'>
-        <div className='left-section'>
-          <div className='home-button-container'>
-            <img src={homeIcon} onClick={this.switchPage} />
+        <div className='data-container'>
+          <div className='left-section'>
+            <div className='home-button-container'>
+              <img src={homeIcon} onClick={this.switchPage} />
+            </div>
+            <div className='song-info-container'>
+              <div
+                className='song-thumbnail'
+                style={{ backgroundImage: `url(${this.state.songThumbnail}` }}
+              ></div>
+              <div className='artist-name'>{this.state.songArtist}</div>
+              <div className='song-name'>{this.state.songName}</div>
+            </div>
           </div>
-          <div className='song-info-container'>
-            <div
-              className='song-thumbnail'
-              style={{ backgroundImage: `url(${this.state.songThumbnail}` }}
-            ></div>
-            <div className='artist-name'>{this.state.songArtist}</div>
-            <div className='song-name'>{this.state.songName}</div>
-          </div>
-          <div className='main-player-container'>
-            <MainPlayer
-              songTimeElapsed={this.state.songTimeElapsed}
-              songDuration={this.state.songDuration}
-              volume={this.state.songVolume}
-              hasSongLoaded={this.state.hasSongLoaded}
-              onPlayPause={this.toggleSong}
-              onSongSeek={this.changeSongTime}
-              onVolumeChange={this.changeSongVolume}
-              likedSong={this.likedSong}
-            />
+          <div className='right-section'>
+            <div className='search-bar-container'>
+              <input
+                type='text'
+                placeholder='Search for Songs!'
+                className='search-box'
+                onChange={this.updateSearchInput}
+              ></input>
+              <div className='search-button' onClick={this.getSearchResults}>
+                <img src={searchIcon} width='18px' />
+              </div>
+            </div>
+            <div className='buttons-container'>
+              <div
+                className='option option-search'
+                onClick={() => {
+                  this.setState({
+                    songList: this.state.searchResults,
+                  });
+                }}
+              >
+                Search
+              </div>
+              <div
+                className='option option-recommended'
+                onClick={() => {
+                  this.setState({
+                    songList: this.state.recommendedSongs,
+                  });
+                }}
+              >
+                Recommended
+              </div>
+              <div className='option option-liked'>Liked</div>
+            </div>
+            <div className='song-list-container'>
+              {this.state.songList.map((song) => {
+                return (
+                  <SongCard
+                    songName={song.song}
+                    artistName={song.artist}
+                    songThumbnail={song.thumbnail.url}
+                    songStream={song.streamAddress}
+                    key={song.songId}
+                    id={song.songId}
+                    onClick={this.playSong}
+                    likedSong={this.likedSong}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
-        <div className='right-section'>
-          <div className='search-bar-container'>
-            <input
-              type='text'
-              placeholder='Search for Songs!'
-              className='search-box'
-              onChange={this.updateSearchInput}
-            ></input>
-            <div className='search-button' onClick={this.getSearchResults}>
-              <img src={searchIcon} width='18px' />
-            </div>
-          </div>
-          <div className='buttons-container'>
-            <div
-              className='option option-search'
-              onClick={() => {
-                this.setState({
-                  songList: this.state.searchResults,
-                });
-              }}
-            >
-              Search
-            </div>
-            <div
-              className='option option-recommended'
-              onClick={() => {
-                this.setState({
-                  songList: this.state.recommendedSongs,
-                });
-              }}
-            >
-              Recommended
-            </div>
-            <div className='option option-liked'>Liked</div>
-          </div>
-          <div className='song-list-container'>
-            {this.state.songList.map((song) => {
-              return (
-                <SongCard
-                  songName={song.song}
-                  artistName={song.artist}
-                  songThumbnail={song.thumbnail.url}
-                  songStream={song.streamAddress}
-                  key={song.songId}
-                  id={song.songId}
-                  onClick={this.playSong}
-                  likedSong = {this.likedSong}
-                />
-              );
-            })}
-          </div>
+        <div className='main-player'>
+          <MainPlayer
+            songTimeElapsed={this.state.songTimeElapsed}
+            songDuration={this.state.songDuration}
+            volume={this.state.songVolume}
+            hasSongLoaded={this.state.hasSongLoaded}
+            onPlayPause={this.toggleSong}
+            onSongSeek={this.changeSongTime}
+            onVolumeChange={this.changeSongVolume}
+            likedSong={this.likedSong}
+          />
         </div>
       </div>
     );
