@@ -65,8 +65,9 @@ export default class PlayerArea extends Component {
     }
   };
 
-  componentDidMount = () => {
-    this.verifyUserLogin();
+  componentDidMount = async () => {
+    await this.verifyUserLogin();
+    console.log(this.state);
   };
 
   // Event handler to update input value.
@@ -188,14 +189,12 @@ export default class PlayerArea extends Component {
 
   //event handler for adding liked songs to database
 
-  addToLikedSong = async () => {
-    // console.log('done');
-    // console.log(email);
+  addToLikedSongs = async () => {
     const response = await axios({
       method: 'PUT',
-      url: `${SERVER_ADDRESS}/like`,
+      url: `${SERVER_ADDRESS}/user/like`,
       data: {
-        email: this.userEmail,
+        email: this.state.userEmail,
         songId: this.state.songId,
         songName: this.state.songName,
       },
@@ -270,7 +269,7 @@ export default class PlayerArea extends Component {
                     key={song.songId}
                     id={song.songId}
                     onClick={this.playSong}
-                    likedSong={this.likedSong}
+                    // likedSong={this.likedSong}
                   />
                 );
               })}
@@ -286,7 +285,7 @@ export default class PlayerArea extends Component {
             onPlayPause={this.toggleSong}
             onSongSeek={this.changeSongTime}
             onVolumeChange={this.changeSongVolume}
-            likedSong={this.likedSong}
+            addToLikedSongs={this.addToLikedSongs}
           />
         </div>
       </div>
