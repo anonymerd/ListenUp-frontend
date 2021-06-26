@@ -76,7 +76,7 @@
   font-weight: 600;
 }
 
-.main-section .player-button-container button {
+.main-section .player-button-container .player-button {
   text-align: center;
   display: block;
   padding: 15px;

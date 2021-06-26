@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { GoogleLogin } from 'react-google-login';
+import { Link } from 'react-router-dom';
 
 import Navbar from './Navbar/Navbar';
 import Player from './Player/Player';
@@ -17,8 +18,6 @@ const SERVER_ADDRESS = 'http://localhost:8000/api';
 const CLIENT_ID =
   '390511031158-234aa4gmc6oadsj6inuku9hi9f6ug8vq.apps.googleusercontent.com';
 
-var email = '';
-
 export default class Homepage extends Component {
   state = {
     // Song Details
@@ -35,7 +34,8 @@ export default class Homepage extends Component {
 
     // User Details
     isLoggedIn: false,
-    useName: '',
+    userName: '',
+    userEmail: '',
     userIcon: userIcon,
   };
 
@@ -140,10 +140,11 @@ export default class Homepage extends Component {
       const data = loginResponse.data;
       console.log(data);
 
-      if (data.isEmailVerified === true) {
-        email = data.email
+      if (data.isEmailVerified) {
+        sessionStorage.setItem('tokenId', res.tokenId);
         this.setState({
           userName: data.name,
+          userEmail: data.email,
           userIcon: data.userIcon,
           isLoggedIn: true,
         });
@@ -198,7 +199,15 @@ export default class Homepage extends Component {
                     <div className='user-name'>
                       Welcome {this.state.userName} !
                     </div>
-                    <button onClick={this.openPlayer}>Go to Player</button>
+                    <Link
+                      className='player-button'
+                      to={{
+                        pathname: '/player',
+                      }}
+                      userEmail={this.state.email}
+                    >
+                      Go to Player
+                    </Link>
                   </div>
                 ) : (
                   <div className='signin-button'>
@@ -272,5 +281,3 @@ export default class Homepage extends Component {
     );
   }
 }
-
-export {email};

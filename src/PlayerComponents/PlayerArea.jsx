@@ -6,8 +6,6 @@ import history from '../history';
 import MainPlayer from './MainPlayer/MainPlayer';
 import SongCard from './SongCard/SongCard';
 
-import { email } from '../HomepageComponents/Homepage';
-
 const axios = require('axios');
 
 const SERVER_ADDRESS = 'http://localhost:8000/api';
@@ -30,6 +28,45 @@ export default class PlayerArea extends Component {
     songList: [],
 
     searchInput: '',
+  };
+
+  // TODO: Verify user Login.
+
+  verifyUserLogin = async () => {
+    try {
+      const tokenId = sessionStorage.getItem('tokenId');
+      console.log(sessionStorage.getItem('tokenId'));
+      if (tokenId) {
+        const loginResponse = await axios({
+          method: 'POST',
+          url: `${SERVER_ADDRESS}/login`,
+          data: {
+            tokenId: tokenId,
+          },
+        });
+        const data = loginResponse.data;
+        console.log(data);
+
+        if (data.isEmailVerified) {
+          this.setState({
+            userName: data.name,
+            userEmail: data.email,
+            userIcon: data.userIcon,
+            isLoggedIn: true,
+          });
+        } else {
+          console.log('Invalid Token');
+        }
+      } else {
+        console.log('Token Id not found!');
+      }
+    } catch (err) {
+      console.log(`Login Error from our server: ${err}`);
+    }
+  };
+
+  componentDidMount = () => {
+    this.verifyUserLogin();
   };
 
   // Event handler to update input value.
@@ -151,14 +188,15 @@ export default class PlayerArea extends Component {
 
   //event handler for adding liked songs to database
 
-  likedSong = async () => {
-    console.log('done');
-    console.log(email);
+  addToLikedSong = async () => {
+    // console.log('done');
+    // console.log(email);
     const response = await axios({
-      method: 'POST',
-      url: `${SERVER_ADDRESS}/likedSongs`,
+      method: 'PUT',
+      url: `${SERVER_ADDRESS}/like`,
       data: {
-        email: email,
+        email: this.userEmail,
+        songId: this.state.songId,
         songName: this.state.songName,
       },
     });
