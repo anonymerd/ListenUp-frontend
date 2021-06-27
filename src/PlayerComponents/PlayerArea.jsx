@@ -19,6 +19,7 @@ export default class PlayerArea extends Component {
     songName: '',
     songArtist: '',
     songThumbnail: '',
+    isSongLiked: true,
     streamAddress: '',
     songTimeElapsed: 0,
     songDuration: 0,
@@ -282,6 +283,7 @@ export default class PlayerArea extends Component {
             songDuration={this.state.songDuration}
             volume={this.state.songVolume}
             hasSongLoaded={this.state.hasSongLoaded}
+            isSongLiked={this.state.isSongLiked}
             onPlayPause={this.toggleSong}
             onSongSeek={this.changeSongTime}
             onVolumeChange={this.changeSongVolume}

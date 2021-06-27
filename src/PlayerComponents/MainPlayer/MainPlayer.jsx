@@ -3,6 +3,7 @@ import './MainPlayer.css';
 
 // Importing Icons
 import likeIcon from '../../assets/icons/player-icons/like-icon.svg';
+import likedIcon from '../../assets/icons/player-icons/liked-icon.svg';
 import shuffleIcon from '../../assets/icons/player-icons/shuffle-icon.svg';
 import replayIcon from '../../assets/icons/player-icons/repeat-icon.svg';
 import prevIcon from '../../assets/icons/player-icons/prev-icon.svg';
@@ -48,11 +49,20 @@ const MainPlayer = (props) => {
             {formatTime(parseInt(props.songTimeElapsed))} /{' '}
             {formatTime(parseInt(props.songDuration))}
           </div>
-          <div
-            className='btn-container like-btn-container'
-            onClick={props.addToLikedSongs}
-          >
-            <img src={likeIcon} alt='Like Icon' />
+          <div className='btn-container like-btn-container'>
+            {props.isSongLiked ? (
+              <img
+                src={likedIcon}
+                alt='Liked Icon'
+                onClick={props.removeFromLikedSongs}
+              />
+            ) : (
+              <img
+                src={likeIcon}
+                alt='Like Icon'
+                onClick={props.addToLikedSongs}
+              />
+            )}
           </div>
           <div className='btn-container shuffle-btn-container'>
             <img src={shuffleIcon} alt='Shuffle Icon' />
