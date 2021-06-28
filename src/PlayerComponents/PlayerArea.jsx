@@ -29,6 +29,12 @@ export default class PlayerArea extends Component {
     songList: [],
 
     searchInput: '',
+
+    userName: '',
+    userEmail: '',
+    userIcon: '',
+    isLoggedIn: false,
+    userAuthToken: '',
   };
 
   // TODO: Verify user Login.
@@ -36,13 +42,12 @@ export default class PlayerArea extends Component {
   verifyUserLogin = async () => {
     try {
       const tokenId = sessionStorage.getItem('tokenId');
-      console.log(sessionStorage.getItem('tokenId'));
       if (tokenId) {
         const loginResponse = await axios({
           method: 'POST',
           url: `${SERVER_ADDRESS}/login`,
-          data: {
-            tokenId: tokenId,
+          headers: {
+            Authorization: `Bearer ${tokenId}`,
           },
         });
         const data = loginResponse.data;
@@ -54,6 +59,7 @@ export default class PlayerArea extends Component {
             userEmail: data.email,
             userIcon: data.userIcon,
             isLoggedIn: true,
+            userAuthToken: tokenId,
           });
         } else {
           console.log('Invalid Token');
@@ -104,7 +110,7 @@ export default class PlayerArea extends Component {
       this.setState({
         hasSongLoaded: false,
       });
-      this.getRandomSong();
+      // this.getRandomSong();
     });
     this.state.currSong.ontimeupdate = () => {
       this.setState({
@@ -116,7 +122,12 @@ export default class PlayerArea extends Component {
   };
 
   getRecommendedSongs = async (songId) => {
-    const response = await axios(`${SERVER_ADDRESS}/suggestions/${songId}`);
+    const response = await axios({
+      url: `${SERVER_ADDRESS}/suggestions/${songId}`,
+      headers: {
+        Authorization: `Bearer ${this.state.userAuthToken}`,
+      },
+    });
     await this.setState({
       recommendedSongs: response.data.suggestions,
     });
@@ -130,8 +141,8 @@ export default class PlayerArea extends Component {
         const response = await axios({
           method: 'POST',
           url: `${SERVER_ADDRESS}/search?q=${this.state.searchInput}`,
-          data: {
-            email: this.state.userEmail,
+          headers: {
+            Authorization: `Bearer ${this.state.userAuthToken}`,
           },
         });
 

@@ -37,6 +37,7 @@ export default class Homepage extends Component {
     userName: '',
     userEmail: '',
     userIcon: userIcon,
+    userAuthToken: '',
   };
 
   loader = (
@@ -133,8 +134,8 @@ export default class Homepage extends Component {
       const loginResponse = await axios({
         method: 'POST',
         url: `${SERVER_ADDRESS}/login`,
-        data: {
-          tokenId: res.tokenId,
+        headers: {
+          Authorization: `Bearer ${res.tokenId}`,
         },
       });
       const data = loginResponse.data;
@@ -147,6 +148,7 @@ export default class Homepage extends Component {
           userEmail: data.email,
           userIcon: data.userIcon,
           isLoggedIn: true,
+          userAuthToken: res.tokenId,
         });
       }
     } catch (err) {
