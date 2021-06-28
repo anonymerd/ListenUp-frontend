@@ -19,7 +19,7 @@ export default class PlayerArea extends Component {
     songName: '',
     songArtist: '',
     songThumbnail: '',
-    isSongLiked: true,
+    isSongLiked: false,
     streamAddress: '',
     songTimeElapsed: 0,
     songDuration: 0,
@@ -88,6 +88,7 @@ export default class PlayerArea extends Component {
       songArtist: songData.songArtist,
       songThumbnail: songData.songThumbnail,
       streamAddress: songData.streamAddress,
+      isSongLiked: songData.isLiked,
     });
 
     this.state.currSong.addEventListener('canplaythrough', () => {
@@ -126,9 +127,13 @@ export default class PlayerArea extends Component {
   getSearchResults = async () => {
     if (this.state.searchInput) {
       try {
-        const response = await axios(
-          `${SERVER_ADDRESS}/search?q=${this.state.searchInput}`
-        );
+        const response = await axios({
+          method: 'POST',
+          url: `${SERVER_ADDRESS}/search?q=${this.state.searchInput}`,
+          data: {
+            email: this.state.userEmail,
+          },
+        });
 
         console.log(response);
 
@@ -190,17 +195,60 @@ export default class PlayerArea extends Component {
 
   //event handler for adding liked songs to database
 
-  addToLikedSongs = async () => {
-    const response = await axios({
-      method: 'PUT',
-      url: `${SERVER_ADDRESS}/user/like`,
-      data: {
-        email: this.state.userEmail,
-        songId: this.state.songId,
-        songName: this.state.songName,
-      },
-    });
-    console.log(response);
+  addToLikedSongs = async (event, song) => {
+    try {
+      let data;
+      console.log(song);
+      if (song) {
+        data = {
+          songId: song.songId,
+        };
+      } else {
+        data = {
+          songId: this.state.songId,
+        };
+        this.setState({
+          isSongLiked: true,
+        });
+      }
+
+      data['email'] = this.state.userEmail;
+      const response = await axios({
+        method: 'PUT',
+        url: `${SERVER_ADDRESS}/user/like`,
+        data: data,
+      });
+    } catch (error) {
+      console.log('Could not add song to Liked Songs: ' + error);
+    }
+  };
+
+  removeFromLikedSongs = async (event, song) => {
+    try {
+      let data;
+      console.log(song);
+      if (song) {
+        data = {
+          songId: song.songId,
+        };
+      } else {
+        data = {
+          songId: this.state.songId,
+        };
+        this.setState({
+          isSongLiked: false,
+        });
+      }
+
+      data['email'] = this.state.userEmail;
+      const response = await axios({
+        method: 'DELETE',
+        url: `${SERVER_ADDRESS}/user/like`,
+        data: data,
+      });
+    } catch (error) {
+      console.log('Could not remove song from Liked Songs: ' + error);
+    }
   };
 
   switchPage = () => {
@@ -267,10 +315,16 @@ export default class PlayerArea extends Component {
                     artistName={song.artist}
                     songThumbnail={song.thumbnail.url}
                     songStream={song.streamAddress}
+                    isLiked={song.isLiked}
                     key={song.songId}
                     id={song.songId}
+                    addToLikedSongs={(event) =>
+                      this.addToLikedSongs(event, song)
+                    }
+                    removeFromLikedSongs={(event) =>
+                      this.removeFromLikedSongs(event, song)
+                    }
                     onClick={this.playSong}
-                    // likedSong={this.likedSong}
                   />
                 );
               })}
@@ -288,6 +342,7 @@ export default class PlayerArea extends Component {
             onSongSeek={this.changeSongTime}
             onVolumeChange={this.changeSongVolume}
             addToLikedSongs={this.addToLikedSongs}
+            removeFromLikedSongs={this.removeFromLikedSongs}
           />
         </div>
       </div>

@@ -10,6 +10,7 @@ const List = (props) => {
     songArtist: props.artistName,
     songThumbnail: props.songThumbnail,
     songId: props.id,
+    isLiked: props.isLiked,
   };
   return (
     <>
@@ -24,9 +25,13 @@ const List = (props) => {
         <div className='music-info'>
           <div className='song-name'>{props.songName}</div>
           <div className='artist-name'>{props.artistName}</div>
-          <button className='like-icon-container' onClick={props.likedSong}>
-            <img src={likeIcon} alt='Like Icon' />
-          </button>
+          <div className='like-icon-container'>
+            <img
+              src={likeIcon}
+              alt='Like Icon'
+              onClick={props.addToLikedSongs}
+            />
+          </div>
         </div>
       </div>
     </>
