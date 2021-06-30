@@ -1,36 +1,50 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import './SongCard.css';
 
 import likeIcon from '../../assets/icons/player-icons/like-icon.svg';
+import likedIcon from '../../assets/icons/player-icons/liked-icon.svg';
 
-const List = (props) => {
+const SongCard = (props) => {
+  const [isLiked, toggleLike] = useState(props.isLiked);
   const songData = {
     streamAddress: props.songStream,
     songName: props.songName,
     songArtist: props.artistName,
     songThumbnail: props.songThumbnail,
     songId: props.id,
-    isLiked: props.isLiked,
+    isLiked: isLiked, // State
   };
   return (
     <>
-      <div
-        className='search-result-song'
-        onClick={() => props.onClick(songData)}
-      >
+      <div className='search-result-song'>
         <div
           className='song-thumbnail'
           style={{ backgroundImage: `url(${props.songThumbnail})` }}
+          onClick={() => props.onClick(songData)}
         ></div>
         <div className='music-info'>
           <div className='song-name'>{props.songName}</div>
           <div className='artist-name'>{props.artistName}</div>
           <div className='like-icon-container'>
-            <img
-              src={likeIcon}
-              alt='Like Icon'
-              onClick={props.addToLikedSongs}
-            />
+            {isLiked ? (
+              <img
+                src={likedIcon}
+                alt='Liked Icon'
+                onClick={() => {
+                  toggleLike(false);
+                  props.removeFromLikedSongs();
+                }}
+              />
+            ) : (
+              <img
+                src={likeIcon}
+                alt='Like Icon'
+                onClick={() => {
+                  toggleLike(true);
+                  props.addToLikedSongs();
+                }}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -38,4 +52,4 @@ const List = (props) => {
   );
 };
 
-export default List;
+export default SongCard;

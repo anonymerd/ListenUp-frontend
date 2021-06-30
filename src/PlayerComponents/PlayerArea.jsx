@@ -33,6 +33,7 @@ export default class PlayerArea extends Component {
     userName: '',
     userEmail: '',
     userIcon: '',
+    userLikedSongs: [],
     isLoggedIn: false,
     userAuthToken: '',
   };
@@ -73,8 +74,22 @@ export default class PlayerArea extends Component {
   };
 
   componentDidMount = async () => {
+    // Verifying the user login.
     await this.verifyUserLogin();
-    console.log(this.state);
+
+    // Getting the user's liked songs.
+    const response = await axios({
+      method: 'GET',
+      url: `${SERVER_ADDRESS}/user/like`,
+      headers: {
+        Authorization: `Bearer ${this.state.userAuthToken}`,
+      },
+    });
+    const data = response.data;
+    console.log(data);
+    await this.setState({
+      userLikedSongs: data.likedSongs,
+    });
   };
 
   // Event handler to update input value.
@@ -222,12 +237,13 @@ export default class PlayerArea extends Component {
           isSongLiked: true,
         });
       }
-
-      data['email'] = this.state.userEmail;
       const response = await axios({
         method: 'PUT',
         url: `${SERVER_ADDRESS}/user/like`,
         data: data,
+        headers: {
+          Authorization: `Bearer ${this.state.userAuthToken}`,
+        },
       });
     } catch (error) {
       console.log('Could not add song to Liked Songs: ' + error);
@@ -250,12 +266,13 @@ export default class PlayerArea extends Component {
           isSongLiked: false,
         });
       }
-
-      data['email'] = this.state.userEmail;
       const response = await axios({
         method: 'DELETE',
         url: `${SERVER_ADDRESS}/user/like`,
         data: data,
+        headers: {
+          Authorization: `Bearer ${this.state.userAuthToken}`,
+        },
       });
     } catch (error) {
       console.log('Could not remove song from Liked Songs: ' + error);
@@ -316,7 +333,16 @@ export default class PlayerArea extends Component {
               >
                 Recommended
               </div>
-              <div className='option option-liked'>Liked</div>
+              <div
+                className='option option-liked'
+                onClick={() => {
+                  this.setState({
+                    songList: this.state.userLikedSongs,
+                  });
+                }}
+              >
+                Liked
+              </div>
             </div>
             <div className='song-list-container'>
               {this.state.songList.map((song) => {
