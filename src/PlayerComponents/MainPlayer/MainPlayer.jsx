@@ -76,7 +76,10 @@ const MainPlayer = (props) => {
             <img src={prevIcon} alt='Previous Button Icon' />
           </div>
           <div className='play-pause-btn-container'>
-            <div className='btn play' onClick={props.onPlayPause}>
+            <div
+              className={`btn ${props.isSongPlaying ? 'pause' : 'play'}`}
+              onClick={props.onPlayPause}
+            >
               <span className='bar bar-1'></span>
               <span className='bar bar-2'></span>
             </div>
@@ -110,6 +113,7 @@ const MainPlayer = (props) => {
           type='range'
           className='player-range'
           min='0'
+          key={props.sliderKey}
           max={parseInt(props.songDuration)}
           step='1'
           defaultValue={parseInt(props.songTimeElapsed)}

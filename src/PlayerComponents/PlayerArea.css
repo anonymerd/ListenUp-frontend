@@ -1,23 +1,21 @@
 .player-area-wrapper {
   height: 100vh;
   width: 100vw;
-  background-size: cover;
-  background-position: center;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
 .player-area-wrapper .data-container {
-  height: 80%;
   background-image: linear-gradient(
       rgba(30, 30, 30, 0.8),
       rgba(30, 30, 30, 0.8)
     ),
     url('../assets/images/player-area-background.jpg');
-  display: flex;
   background-size: cover;
   background-position: center;
+  height: 80%;
+  display: flex;
   justify-content: center;
 }
 
@@ -137,10 +135,18 @@
   cursor: pointer;
 }
 
+.right-section .buttons-container .selected {
+  background: #015cc8;
+}
+
 .right-section .song-list-container {
   padding: 20px 0;
   width: 100%;
   overflow: auto;
+}
+.right-section .song-list-container .loader-container {
+  display: flex;
+  justify-content: center;
 }
 
 .player-area-wrapper .main-player {

@@ -5,6 +5,7 @@ import searchIcon from '../assets/icons/search_icon.png';
 import history from '../history';
 import MainPlayer from './MainPlayer/MainPlayer';
 import SongCard from './SongCard/SongCard';
+import loaderIcon from '../assets/icons/loader.svg';
 
 const axios = require('axios');
 
@@ -26,19 +27,28 @@ export default class PlayerArea extends Component {
     songVolume: 5,
     searchResults: [],
     recommendedSongs: [],
-    songList: [],
+
+    selectedOption: 'liked',
+    songList: undefined,
 
     searchInput: '',
+    sliderKey: `${Math.random()}`,
 
     userName: '',
     userEmail: '',
     userIcon: '',
-    userLikedSongs: [],
+    userLikedSongs: undefined,
     isLoggedIn: false,
     userAuthToken: '',
   };
 
   // TODO: Verify user Login.
+
+  loader = (
+    <div className='loader-container'>
+      <img src={loaderIcon} alt='Loader Icon' />
+    </div>
+  );
 
   verifyUserLogin = async () => {
     try {
@@ -89,6 +99,7 @@ export default class PlayerArea extends Component {
     console.log(data);
     await this.setState({
       userLikedSongs: data.likedSongs,
+      songList: data.likedSongs,
     });
   };
 
@@ -116,6 +127,7 @@ export default class PlayerArea extends Component {
       this.setState({
         songDuration: this.state.currSong.duration,
         hasSongLoaded: true,
+        isSongPlaying: true,
       });
       this.state.currSong.volume = this.state.songVolume / 10;
       this.state.currSong.play();
@@ -124,6 +136,7 @@ export default class PlayerArea extends Component {
     this.state.currSong.addEventListener('ended', () => {
       this.setState({
         hasSongLoaded: false,
+        isSongPlaying: false,
       });
       // this.getRandomSong();
     });
@@ -137,17 +150,33 @@ export default class PlayerArea extends Component {
   };
 
   getRecommendedSongs = async (songId) => {
-    const response = await axios({
-      url: `${SERVER_ADDRESS}/suggestions/${songId}`,
-      headers: {
-        Authorization: `Bearer ${this.state.userAuthToken}`,
-      },
-    });
-    await this.setState({
-      recommendedSongs: response.data.suggestions,
-    });
+    try {
+      if (this.state.selectedOption === 'recommended') {
+        await this.setState({
+          songList: undefined,
+        });
+      }
+      const response = await axios({
+        url: `${SERVER_ADDRESS}/suggestions/${songId}`,
+        headers: {
+          Authorization: `Bearer ${this.state.userAuthToken}`,
+        },
+      });
+      if (this.state.selectedOption === 'recommended') {
+        await this.setState({
+          recommendedSongs: response.data.suggestions,
+          songList: response.data.suggestions,
+        });
+      } else {
+        await this.setState({
+          recommendedSongs: response.data.suggestions,
+        });
+      }
 
-    console.log(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   getSearchResults = async () => {
@@ -168,6 +197,7 @@ export default class PlayerArea extends Component {
           this.setState({
             searchResults: response.data.searchResults,
             songList: response.data.searchResults,
+            selectedOption: 'search',
           });
         } else {
           console.log(response.message);
@@ -186,15 +216,15 @@ export default class PlayerArea extends Component {
     else toggleButton = event.target;
 
     if (this.state.currSong.paused) {
-      toggleButton.classList.remove('play');
-      toggleButton.classList.add('pause');
+      // toggleButton.classList.remove('play');
+      // toggleButton.classList.add('pause');
       this.state.currSong.play();
       this.setState({
         isSongPlaying: true,
       });
     } else {
-      toggleButton.classList.remove('pause');
-      toggleButton.classList.add('play');
+      // toggleButton.classList.remove('pause');
+      // toggleButton.classList.add('play');
       this.state.currSong.pause();
       this.setState({
         isSongPlaying: false,
@@ -203,12 +233,20 @@ export default class PlayerArea extends Component {
   };
 
   // Event Handler to change song time.
-  changeSongTime = (event) => {
+  changeSongTime = async (event) => {
     const seekSlider = event.target;
     this.state.currSong.currentTime = `${seekSlider.value}`;
+    console.log(this.state.sliderKey);
 
-    this.setState({ songTimeElapsed: this.state.currSong.currentTime });
-    event.target.defaultValue = this.state.songTimeElapsed;
+    await this.setState({
+      songTimeElapsed: this.state.currSong.currentTime,
+    });
+    await this.setState({
+      sliderKey: `${Math.random()}`,
+    });
+    console.log(this.state.sliderKey);
+
+    // seekSlider.value = this.state.songTimeElapsed;
   };
 
   // Event Handler to change song volume.
@@ -314,9 +352,13 @@ export default class PlayerArea extends Component {
             </div>
             <div className='buttons-container'>
               <div
-                className='option option-search'
+                className={`option option-search ${
+                  this.state.selectedOption === 'search' ? 'selected' : ''
+                }
+                `}
                 onClick={() => {
                   this.setState({
+                    selectedOption: 'search',
                     songList: this.state.searchResults,
                   });
                 }}
@@ -324,9 +366,13 @@ export default class PlayerArea extends Component {
                 Search
               </div>
               <div
-                className='option option-recommended'
+                className={`option option-recommended ${
+                  this.state.selectedOption === 'recommended' ? 'selected' : ''
+                }
+                `}
                 onClick={() => {
                   this.setState({
+                    selectedOption: 'recommended',
                     songList: this.state.recommendedSongs,
                   });
                 }}
@@ -334,9 +380,13 @@ export default class PlayerArea extends Component {
                 Recommended
               </div>
               <div
-                className='option option-liked'
+                className={`option option-liked ${
+                  this.state.selectedOption === 'liked' ? 'selected' : ''
+                }
+                `}
                 onClick={() => {
                   this.setState({
+                    selectedOption: 'liked',
                     songList: this.state.userLikedSongs,
                   });
                 }}
@@ -345,26 +395,28 @@ export default class PlayerArea extends Component {
               </div>
             </div>
             <div className='song-list-container'>
-              {this.state.songList.map((song) => {
-                return (
-                  <SongCard
-                    songName={song.song}
-                    artistName={song.artist}
-                    songThumbnail={song.thumbnail.url}
-                    songStream={song.streamAddress}
-                    isLiked={song.isLiked}
-                    key={song.songId}
-                    id={song.songId}
-                    addToLikedSongs={(event) =>
-                      this.addToLikedSongs(event, song)
-                    }
-                    removeFromLikedSongs={(event) =>
-                      this.removeFromLikedSongs(event, song)
-                    }
-                    onClick={this.playSong}
-                  />
-                );
-              })}
+              {this.state.songList === undefined
+                ? this.loader
+                : this.state.songList.map((song, idx) => {
+                    return (
+                      <SongCard
+                        songName={song.song}
+                        artistName={song.artist}
+                        songThumbnail={song.thumbnail.url}
+                        songStream={song.streamAddress}
+                        isLiked={song.isLiked}
+                        key={idx}
+                        id={song.songId}
+                        addToLikedSongs={(event) =>
+                          this.addToLikedSongs(event, song)
+                        }
+                        removeFromLikedSongs={(event) =>
+                          this.removeFromLikedSongs(event, song)
+                        }
+                        onClick={this.playSong}
+                      />
+                    );
+                  })}
             </div>
           </div>
         </div>
@@ -374,7 +426,9 @@ export default class PlayerArea extends Component {
             songDuration={this.state.songDuration}
             volume={this.state.songVolume}
             hasSongLoaded={this.state.hasSongLoaded}
+            isSongPlaying={this.state.isSongPlaying}
             isSongLiked={this.state.isSongLiked}
+            sliderKey={this.state.sliderKey}
             onPlayPause={this.toggleSong}
             onSongSeek={this.changeSongTime}
             onVolumeChange={this.changeSongVolume}
