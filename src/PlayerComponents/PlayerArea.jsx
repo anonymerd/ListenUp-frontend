@@ -397,7 +397,7 @@ export default class PlayerArea extends Component {
             <div className='song-list-container'>
               {this.state.songList === undefined
                 ? this.loader
-                : this.state.songList.map((song, idx) => {
+                : this.state.songList.map((song) => {
                     return (
                       <SongCard
                         songName={song.song}
@@ -405,7 +405,7 @@ export default class PlayerArea extends Component {
                         songThumbnail={song.thumbnail.url}
                         songStream={song.streamAddress}
                         isLiked={song.isLiked}
-                        key={idx}
+                        key={song.songId}
                         id={song.songId}
                         addToLikedSongs={(event) =>
                           this.addToLikedSongs(event, song)
