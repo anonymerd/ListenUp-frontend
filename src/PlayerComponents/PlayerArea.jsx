@@ -405,8 +405,8 @@ export default class PlayerArea extends Component {
                         songThumbnail={song.thumbnail.url}
                         songStream={song.streamAddress}
                         isLiked={song.isLiked}
-                        key={song.songId}
                         id={song.songId}
+                        key={song.songId}
                         addToLikedSongs={(event) =>
                           this.addToLikedSongs(event, song)
                         }
