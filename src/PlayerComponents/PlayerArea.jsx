@@ -261,15 +261,17 @@ export default class PlayerArea extends Component {
 
   addToLikedSongs = async (event, song) => {
     try {
-      let data;
-      console.log(song);
+      let likedSong;
       if (song) {
-        data = {
-          songId: song.songId,
-        };
+        likedSong = song;
       } else {
-        data = {
+        likedSong = {
           songId: this.state.songId,
+          song: this.state.songName,
+          artist: this.state.songArtist,
+          thumbnail: this.state.songThumbnail,
+          streamAddress: this.state.streamAddress,
+          isLiked: true,
         };
         this.setState({
           isSongLiked: true,
@@ -278,11 +280,46 @@ export default class PlayerArea extends Component {
       const response = await axios({
         method: 'PUT',
         url: `${SERVER_ADDRESS}/user/like`,
-        data: data,
+        data: {
+          songId: likedSong.songId,
+        },
         headers: {
           Authorization: `Bearer ${this.state.userAuthToken}`,
         },
       });
+
+      const likedSongs = this.state.userLikedSongs;
+      likedSongs.unshift(likedSong);
+
+      const recommendedSongs = this.state.recommendedSongs;
+      recommendedSongs.forEach((song) => {
+        if (song.songId === likedSong.songId) song.isLiked = true;
+      });
+
+      const searchResults = this.state.searchResults;
+      searchResults.forEach((song) => {
+        if (song.songId === likedSong.songId) song.isLiked = true;
+      });
+
+      await this.setState({
+        userLikedSongs: likedSongs,
+        recommendedSongs: recommendedSongs,
+        searchResults: searchResults,
+      });
+
+      if (this.state.selectedOption === 'search') {
+        this.setState({
+          songList: this.state.searchResults,
+        });
+      } else if (this.state.selectedOption === 'recommended') {
+        this.setState({
+          songList: this.state.recommendedSongs,
+        });
+      } else if (this.state.selectedOption === 'liked') {
+        this.setState({
+          songList: this.state.userLikedSongs,
+        });
+      }
     } catch (error) {
       console.log('Could not add song to Liked Songs: ' + error);
     }
@@ -290,15 +327,17 @@ export default class PlayerArea extends Component {
 
   removeFromLikedSongs = async (event, song) => {
     try {
-      let data;
-      console.log(song);
+      let likedSong;
       if (song) {
-        data = {
-          songId: song.songId,
-        };
+        likedSong = song;
       } else {
-        data = {
+        likedSong = {
           songId: this.state.songId,
+          song: this.state.songName,
+          artist: this.state.songArtist,
+          thumbnail: this.state.songThumbnail,
+          streamAddress: this.state.streamAddress,
+          isLiked: false,
         };
         this.setState({
           isSongLiked: false,
@@ -307,11 +346,48 @@ export default class PlayerArea extends Component {
       const response = await axios({
         method: 'DELETE',
         url: `${SERVER_ADDRESS}/user/like`,
-        data: data,
+        data: {
+          songId: likedSong.songId,
+        },
         headers: {
           Authorization: `Bearer ${this.state.userAuthToken}`,
         },
       });
+
+      let likedSongs = this.state.userLikedSongs;
+      likedSongs = likedSongs.filter(
+        (song) => song.songId !== likedSong.songId
+      );
+
+      const recommendedSongs = this.state.recommendedSongs;
+      recommendedSongs.forEach((song) => {
+        if (song.songId === likedSong.songId) song.isLiked = false;
+      });
+
+      const searchResults = this.state.searchResults;
+      searchResults.forEach((song) => {
+        if (song.songId === likedSong.songId) song.isLiked = false;
+      });
+
+      await this.setState({
+        userLikedSongs: likedSongs,
+        recommendedSongs: recommendedSongs,
+        searchResults: searchResults,
+      });
+
+      if (this.state.selectedOption === 'search') {
+        this.setState({
+          songList: this.state.searchResults,
+        });
+      } else if (this.state.selectedOption === 'recommended') {
+        this.setState({
+          songList: this.state.recommendedSongs,
+        });
+      } else if (this.state.selectedOption === 'liked') {
+        this.setState({
+          songList: this.state.userLikedSongs,
+        });
+      }
     } catch (error) {
       console.log('Could not remove song from Liked Songs: ' + error);
     }
