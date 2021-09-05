@@ -172,7 +172,13 @@ export default class Homepage extends Component {
   };
 
   openPlayer = () => {
-    this.state.currSong.pause();
+    // Pausing and removing the song.
+    this.setState({
+      currSong: null,
+    });
+    // this.state.currSong.pause();
+    // this.state.currSong = null;
+
     history.push('/player');
   };
 
@@ -207,6 +213,9 @@ export default class Homepage extends Component {
                         pathname: '/player',
                       }}
                       userEmail={this.state.email}
+                      onClick={() => {
+                        this.state.currSong.pause();
+                      }}
                     >
                       Go to Player
                     </Link>
