@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
+
 import './PlayerArea.css';
+
 import homeIcon from '../assets/icons/home_icon.png';
 import searchIcon from '../assets/icons/search_icon.png';
+import loaderIcon from '../assets/icons/loader.svg';
+
 import history from '../history';
+
 import MainPlayer from './MainPlayer/MainPlayer';
 import SongCard from './SongCard/SongCard';
-import loaderIcon from '../assets/icons/loader.svg';
+import Song from '../Models/Song';
 
 const axios = require('axios');
 
@@ -13,9 +18,10 @@ const SERVER_ADDRESS = 'http://localhost:8000/api';
 
 export default class PlayerArea extends Component {
   state = {
-    currSong: new Audio(),
     isSongPlaying: false,
     hasSongLoaded: false,
+    currAudio: new Audio(),
+    currSong: null,
     songId: '',
     songName: '',
     songArtist: '',
@@ -24,7 +30,7 @@ export default class PlayerArea extends Component {
     streamAddress: '',
     songTimeElapsed: 0,
     songDuration: 0,
-    songVolume: 3,
+    songVolume: 1,
     searchResults: [],
     recommendedSongs: [],
 
@@ -88,6 +94,11 @@ export default class PlayerArea extends Component {
     await this.verifyUserLogin();
 
     // Getting the user's liked songs.
+    this.getLikedSongs();
+  };
+
+  // Fucntion to retrieve users Liked Songs.
+  getLikedSongs = async () => {
     const response = await axios({
       method: 'GET',
       url: `${SERVER_ADDRESS}/user/like`,
@@ -95,11 +106,21 @@ export default class PlayerArea extends Component {
         Authorization: `Bearer ${this.state.userAuthToken}`,
       },
     });
-    const data = response.data;
-    console.log(data);
+
+    const likedSongs = response.data.likedSongs.map((song) => {
+      return new Song(
+        song.id,
+        song.name,
+        song.artist,
+        song.thumbnail,
+        song.streamAddress,
+        song.isLiked
+      );
+    });
+
     await this.setState({
-      userLikedSongs: data.likedSongs,
-      songList: data.likedSongs,
+      userLikedSongs: likedSongs,
+      songList: likedSongs,
     });
   };
 
@@ -110,45 +131,50 @@ export default class PlayerArea extends Component {
     });
   };
 
-  playSong = async (songData) => {
-    console.log(songData);
-    if (this.state.currSong) this.state.currSong.pause();
+  playSong = async (newSong) => {
+    console.log(newSong.getInfo());
+
+    // Changing the stream address to that of the new song.
+    this.state.currAudio.setAttribute('src', newSong.streamAddress);
+
+    // Telling the browser to preload the metadata of the song.
+    this.state.currAudio.preload = 'metadata';
+
+    // Loading the new song.
+    this.state.currAudio.load();
+
     await this.setState({
-      currSong: new Audio(songData.streamAddress),
-      songId: songData.songId,
-      songName: songData.songName,
-      songArtist: songData.songArtist,
-      songThumbnail: songData.songThumbnail,
-      streamAddress: songData.streamAddress,
-      isSongLiked: songData.isLiked,
+      currSong: newSong,
     });
 
-    this.state.currSong.addEventListener('canplaythrough', () => {
+    this.state.currAudio.addEventListener('canplaythrough', () => {
       this.setState({
-        songDuration: this.state.currSong.duration,
+        songDuration: this.state.currAudio.duration,
         hasSongLoaded: true,
         isSongPlaying: true,
       });
-      this.state.currSong.volume = this.state.songVolume / 10;
-      this.state.currSong.play();
+      this.state.currSong.setDuration(this.state.songDuration);
+      this.state.currAudio.volume = this.state.songVolume / 10;
+      this.state.currAudio.play();
     });
 
-    this.state.currSong.addEventListener('ended', () => {
+    this.state.currAudio.addEventListener('ended', () => {
       this.setState({
         hasSongLoaded: false,
         isSongPlaying: false,
       });
       // this.getRandomSong();
     });
-    this.state.currSong.ontimeupdate = () => {
+    this.state.currAudio.ontimeupdate = () => {
       this.setState({
-        songTimeElapsed: this.state.currSong.currentTime,
+        songTimeElapsed: this.state.currAudio.currentTime,
       });
     };
 
-    await this.getRecommendedSongs(songData.songId);
+    await this.getRecommendedSongs(newSong.songId);
   };
 
+  // Function to fetch recommended songs of a given song.
   getRecommendedSongs = async (songId) => {
     try {
       if (this.state.selectedOption === 'recommended') {
@@ -162,23 +188,36 @@ export default class PlayerArea extends Component {
           Authorization: `Bearer ${this.state.userAuthToken}`,
         },
       });
+
+      console.log(response.data.suggestions);
+
+      const suggestions = response.data.suggestions.map((song) => {
+        return new Song(
+          song.id,
+          song.name,
+          song.artist,
+          song.thumbnail,
+          song.streamAddress,
+          song.isLiked
+        );
+      });
+
       if (this.state.selectedOption === 'recommended') {
         await this.setState({
-          recommendedSongs: response.data.suggestions,
-          songList: response.data.suggestions,
+          recommendedSongs: suggestions,
+          songList: suggestions,
         });
       } else {
         await this.setState({
-          recommendedSongs: response.data.suggestions,
+          recommendedSongs: suggestions,
         });
       }
-
-      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
   };
 
+  // Function to retreive search results.
   getSearchResults = async () => {
     if (this.state.searchInput) {
       try {
@@ -190,13 +229,23 @@ export default class PlayerArea extends Component {
           },
         });
 
-        console.log(response);
+        console.log(response.data.searchResults);
 
         if (response.data.success) {
           // Rendering Search Results
+          const searchResults = response.data.searchResults.map((song) => {
+            return new Song(
+              song.id,
+              song.name,
+              song.artist,
+              song.thumbnail,
+              song.streamAddress,
+              song.isLiked
+            );
+          });
           this.setState({
-            searchResults: response.data.searchResults,
-            songList: response.data.searchResults,
+            searchResults: searchResults,
+            songList: searchResults,
             selectedOption: 'search',
           });
         } else {
@@ -215,17 +264,13 @@ export default class PlayerArea extends Component {
       toggleButton = event.target.parentNode;
     else toggleButton = event.target;
 
-    if (this.state.currSong.paused) {
-      // toggleButton.classList.remove('play');
-      // toggleButton.classList.add('pause');
-      this.state.currSong.play();
+    if (this.state.currAudio.paused) {
+      this.state.currAudio.play();
       this.setState({
         isSongPlaying: true,
       });
     } else {
-      // toggleButton.classList.remove('pause');
-      // toggleButton.classList.add('play');
-      this.state.currSong.pause();
+      this.state.currAudio.pause();
       this.setState({
         isSongPlaying: false,
       });
@@ -410,14 +455,19 @@ export default class PlayerArea extends Component {
             <div className='home-button-container'>
               <img src={homeIcon} onClick={this.switchPage} />
             </div>
-            <div className='song-info-container'>
-              <div
-                className='song-thumbnail'
-                style={{ backgroundImage: `url(${this.state.songThumbnail}` }}
-              ></div>
-              <div className='artist-name'>{this.state.songArtist}</div>
-              <div className='song-name'>{this.state.songName}</div>
-            </div>
+
+            {this.state.currSong ? (
+              <div className='song-info-container'>
+                <div
+                  className='song-thumbnail'
+                  style={{
+                    backgroundImage: `url(${this.state.currSong.thumbnail}`,
+                  }}
+                ></div>
+                <div className='artist-name'>{this.state.currSong.artist}</div>
+                <div className='song-name'>{this.state.currSong.name}</div>
+              </div>
+            ) : null}
           </div>
           <div className='right-section'>
             <div className='search-bar-container'>
@@ -481,13 +531,8 @@ export default class PlayerArea extends Component {
                 : this.state.songList.map((song) => {
                     return (
                       <SongCard
-                        songName={song.song}
-                        artistName={song.artist}
-                        songThumbnail={song.thumbnail.url}
-                        songStream={song.streamAddress}
-                        isLiked={song.isLiked}
-                        id={song.songId}
-                        key={song.songId}
+                        song={song}
+                        key={song.id}
                         addToLikedSongs={(event) =>
                           this.addToLikedSongs(event, song)
                         }

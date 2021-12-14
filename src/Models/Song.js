@@ -5,6 +5,27 @@ export default class Song {
     this.artist = artist;
     this.thumbnail = thumbnail;
     this.streamAddress = streamAddress;
-    this.isSongLiked = isSongLiked;
+    this.isLiked = isSongLiked;
+
+    this.load = () => {
+      this.audio = new Audio(this.streamAddress);
+
+      // this.audio.addEventListener('canplaythrough', () )
+    };
+
+    this.setDuration = (duration) => {
+      this.duration = duration;
+    };
+
+    this.getInfo = () => {
+      return {
+        id: this.id,
+        name: this.name,
+        artist: this.artist,
+        thumbnail: this.thumbnail,
+        streamAddress: this.streamAddress,
+        isLiked: this.isLiked,
+      };
+    };
   }
 }
