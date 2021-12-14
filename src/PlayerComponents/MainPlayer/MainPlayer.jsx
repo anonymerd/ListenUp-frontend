@@ -84,7 +84,7 @@ const MainPlayer = (props) => {
               <span className='bar bar-2'></span>
             </div>
           </div>
-          <div className='next-btn-container'>
+          <div className='next-btn-container' onClick={props.onNext}>
             <img src={nextIcon} alt='Next Button Icon' />
           </div>
         </div>

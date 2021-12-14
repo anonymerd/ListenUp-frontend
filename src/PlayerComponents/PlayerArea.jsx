@@ -24,7 +24,7 @@ export default class PlayerArea extends Component {
     streamAddress: '',
     songTimeElapsed: 0,
     songDuration: 0,
-    songVolume: 5,
+    songVolume: 3,
     searchResults: [],
     recommendedSongs: [],
 
@@ -230,6 +230,11 @@ export default class PlayerArea extends Component {
         isSongPlaying: false,
       });
     }
+  };
+
+  // Event Hanlder to play next song.
+  playNextSong = () => {
+    this.playSong(this.state.recommendedSongs[0]);
   };
 
   // Event Handler to change song time.
@@ -506,6 +511,7 @@ export default class PlayerArea extends Component {
             isSongLiked={this.state.isSongLiked}
             sliderKey={this.state.sliderKey}
             onPlayPause={this.toggleSong}
+            onNext={this.playNextSong}
             onSongSeek={this.changeSongTime}
             onVolumeChange={this.changeSongVolume}
             addToLikedSongs={this.addToLikedSongs}
