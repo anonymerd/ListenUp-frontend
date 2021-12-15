@@ -11,6 +11,7 @@ import history from '../history';
 import MainPlayer from './MainPlayer/MainPlayer';
 import SongCard from './SongCard/SongCard';
 import Song from '../Models/Song';
+import Queue from '../Models/Queue';
 
 const axios = require('axios');
 
@@ -25,11 +26,13 @@ export default class PlayerArea extends Component {
     songTimeElapsed: 0,
     songDuration: 0,
     songVolume: 1,
-    searchResults: [],
-    recommendedSongs: [],
+    searchResults: new Queue([]),
+    recommendedSongs: new Queue([]),
 
     selectedOption: 'liked',
-    songList: undefined,
+    displayList: new Queue([]),
+
+    currQueue: new Queue([]),
 
     searchInput: '',
     sliderKey: `${Math.random()}`,
@@ -92,6 +95,14 @@ export default class PlayerArea extends Component {
   };
 
   // Fucntion to retrieve users Liked Songs.
+
+  /**
+   * Retrieve current user's Liked songs.
+   * @param  {Number} num1 The first number
+   * @param  {Number} num2 The second number
+   * @return {Number}      The total of the two numbers
+   */
+
   getLikedSongs = async () => {
     const response = await axios({
       method: 'GET',
@@ -112,9 +123,11 @@ export default class PlayerArea extends Component {
       );
     });
 
+    const likedSongsQueue = new Queue(likedSongs);
+
     await this.setState({
-      userLikedSongs: likedSongs,
-      songList: likedSongs,
+      userLikedSongs: likedSongsQueue,
+      displayList: likedSongsQueue,
     });
   };
 
@@ -125,8 +138,18 @@ export default class PlayerArea extends Component {
     });
   };
 
-  playSong = async (newSong) => {
+  playSong = async (newSong, fromDisplayList) => {
     console.log(newSong.getInfo());
+
+    // If the song is played from the Display List then adding the song into the Current Queue first.
+    if (fromDisplayList) {
+      this.setState({
+        currQueue: new Queue([newSong]),
+      });
+      // this.state.currQueue.addSong(newSong);
+    }
+
+    console.log(this.state.currQueue.songList.map((song) => song.getInfo()));
 
     this.setState({
       hasSongLoaded: false,
@@ -175,7 +198,7 @@ export default class PlayerArea extends Component {
     try {
       if (this.state.selectedOption === 'recommended') {
         await this.setState({
-          songList: undefined,
+          displayList: new Queue([]),
         });
       }
       const response = await axios({
@@ -185,28 +208,33 @@ export default class PlayerArea extends Component {
         },
       });
 
-      console.log(response.data.suggestions);
+      if (response.data.success) {
+        console.log(response.data);
 
-      const suggestions = response.data.suggestions.map((song) => {
-        return new Song(
-          song.id,
-          song.name,
-          song.artist,
-          song.thumbnail,
-          song.streamAddress,
-          song.isLiked
-        );
-      });
-
-      if (this.state.selectedOption === 'recommended') {
-        await this.setState({
-          recommendedSongs: suggestions,
-          songList: suggestions,
+        const suggestions = response.data.suggestions.map((song) => {
+          return new Song(
+            song.id,
+            song.name,
+            song.artist,
+            song.thumbnail,
+            song.streamAddress,
+            song.isLiked
+          );
         });
+        const suggestionsQueue = new Queue(suggestions);
+
+        if (this.state.selectedOption === 'recommended') {
+          await this.setState({
+            recommendedSongs: suggestionsQueue,
+            displayList: suggestionsQueue,
+          });
+        } else {
+          await this.setState({
+            recommendedSongs: suggestionsQueue,
+          });
+        }
       } else {
-        await this.setState({
-          recommendedSongs: suggestions,
-        });
+        console.log(response.message);
       }
     } catch (error) {
       console.error(error);
@@ -239,9 +267,12 @@ export default class PlayerArea extends Component {
               song.isLiked
             );
           });
+
+          const searchQueue = new Queue(searchResults);
+
           this.setState({
-            searchResults: searchResults,
-            songList: searchResults,
+            searchResults: searchQueue,
+            displayList: searchQueue,
             selectedOption: 'search',
           });
         } else {
@@ -273,9 +304,53 @@ export default class PlayerArea extends Component {
     }
   };
 
-  // Event Hanlder to play next song.
+  /**
+   * @desc Plays the next song.
+   */
   playNextSong = () => {
-    this.playSong(this.state.recommendedSongs[0]);
+    // Getting next song from the Current Queue.
+    let nextSong = this.state.currQueue.getNextSong();
+
+    console.log(
+      'This is from play next song: ' + this.state.currQueue.currentSong
+    );
+
+    // If next song is not available then getting it from recommended songs.
+    if (!nextSong) {
+      // Updating the current song pointer of the current queue.
+      this.state.currQueue.currentSong++;
+
+      nextSong = this.state.recommendedSongs.getNextSong();
+
+      // Adding that song to the Current Queue.
+      this.state.currQueue.addSong(nextSong);
+    }
+
+    if (nextSong) {
+      // Playing next song.
+      this.playSong(nextSong, false);
+    } else {
+      console.log('No Next Song.');
+    }
+  };
+
+  /**
+   * @desc Plays the previous song.
+   */
+  playPrevSong = () => {
+    // Getting previous song from the Current Queue.
+    const prevSong = this.state.currQueue.getPrevSong();
+
+    console.log(
+      'This is from play prev song: ' + this.state.currQueue.currentSong
+    );
+
+    if (prevSong) {
+      // Playing next song.
+      this.playSong(prevSong, false);
+    } else {
+      console.log('No Prev Song.');
+    }
   };
 
   // Event Handler to change song time.
@@ -350,15 +425,15 @@ export default class PlayerArea extends Component {
 
       if (this.state.selectedOption === 'search') {
         this.setState({
-          songList: this.state.searchResults,
+          displayList: this.state.searchResults,
         });
       } else if (this.state.selectedOption === 'recommended') {
         this.setState({
-          songList: this.state.recommendedSongs,
+          displayList: this.state.recommendedSongs,
         });
       } else if (this.state.selectedOption === 'liked') {
         this.setState({
-          songList: this.state.userLikedSongs,
+          displayList: this.state.userLikedSongs,
         });
       }
     } catch (error) {
@@ -413,15 +488,15 @@ export default class PlayerArea extends Component {
 
       if (this.state.selectedOption === 'search') {
         this.setState({
-          songList: this.state.searchResults,
+          displayList: this.state.searchResults,
         });
       } else if (this.state.selectedOption === 'recommended') {
         this.setState({
-          songList: this.state.recommendedSongs,
+          displayList: this.state.recommendedSongs,
         });
       } else if (this.state.selectedOption === 'liked') {
         this.setState({
-          songList: this.state.userLikedSongs,
+          displayList: this.state.userLikedSongs,
         });
       }
     } catch (error) {
@@ -476,7 +551,7 @@ export default class PlayerArea extends Component {
                 onClick={() => {
                   this.setState({
                     selectedOption: 'search',
-                    songList: this.state.searchResults,
+                    displayList: this.state.searchResults,
                   });
                 }}
               >
@@ -490,7 +565,7 @@ export default class PlayerArea extends Component {
                 onClick={() => {
                   this.setState({
                     selectedOption: 'recommended',
-                    songList: this.state.recommendedSongs,
+                    displayList: this.state.recommendedSongs,
                   });
                 }}
               >
@@ -504,7 +579,7 @@ export default class PlayerArea extends Component {
                 onClick={() => {
                   this.setState({
                     selectedOption: 'liked',
-                    songList: this.state.userLikedSongs,
+                    displayList: this.state.userLikedSongs,
                   });
                 }}
               >
@@ -512,9 +587,9 @@ export default class PlayerArea extends Component {
               </div>
             </div>
             <div className='song-list-container'>
-              {this.state.songList === undefined
+              {this.state.displayList.songList.length === 0
                 ? this.loader
-                : this.state.songList.map((song) => {
+                : this.state.displayList.songList.map((song) => {
                     return (
                       <SongCard
                         song={song}
@@ -542,9 +617,9 @@ export default class PlayerArea extends Component {
             isSongLiked={
               this.state.currSong ? this.state.currSong.isLiked : null
             }
-            // sliderKey={this.state.sliderKey}
             onPlayPause={this.toggleSong}
             onNext={this.playNextSong}
+            onPrev={this.playPrevSong}
             onSongSeek={this.changeSongTime}
             onVolumeChange={this.changeSongVolume}
             addToLikedSongs={this.addToLikedSongs}

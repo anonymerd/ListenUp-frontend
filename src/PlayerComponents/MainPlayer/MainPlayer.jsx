@@ -80,7 +80,7 @@ const MainPlayer = (props) => {
           </div>
         </div>
         <div className='song-btn-container'>
-          <div className='prev-btn-container'>
+          <div className='prev-btn-container' onClick={props.onPrev}>
             <img src={prevIcon} alt='Previous Button Icon' />
           </div>
           {props.hasSongLoaded ? (

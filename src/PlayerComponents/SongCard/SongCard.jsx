@@ -12,7 +12,7 @@ const SongCard = (props) => {
         <div
           className='song-thumbnail'
           style={{ backgroundImage: `url(${props.song.thumbnail})` }}
-          onClick={() => props.onClick(props.song)}
+          onClick={() => props.onClick(props.song, true)}
         ></div>
         <div className='music-info'>
           <div className='song-name'>{props.song.name}</div>
