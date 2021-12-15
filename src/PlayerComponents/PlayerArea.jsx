@@ -22,12 +22,6 @@ export default class PlayerArea extends Component {
     hasSongLoaded: false,
     currAudio: new Audio(),
     currSong: null,
-    songId: '',
-    songName: '',
-    songArtist: '',
-    songThumbnail: '',
-    isSongLiked: false,
-    streamAddress: '',
     songTimeElapsed: 0,
     songDuration: 0,
     songVolume: 1,
@@ -134,6 +128,11 @@ export default class PlayerArea extends Component {
   playSong = async (newSong) => {
     console.log(newSong.getInfo());
 
+    this.setState({
+      hasSongLoaded: false,
+      isSongPlaying: false,
+    });
+
     // Changing the stream address to that of the new song.
     this.state.currAudio.setAttribute('src', newSong.streamAddress);
 
@@ -159,10 +158,7 @@ export default class PlayerArea extends Component {
     });
 
     this.state.currAudio.addEventListener('ended', () => {
-      this.setState({
-        hasSongLoaded: false,
-        isSongPlaying: false,
-      });
+      this.playNextSong();
       // this.getRandomSong();
     });
     this.state.currAudio.ontimeupdate = () => {
@@ -171,7 +167,7 @@ export default class PlayerArea extends Component {
       });
     };
 
-    await this.getRecommendedSongs(newSong.songId);
+    await this.getRecommendedSongs(newSong.id);
   };
 
   // Function to fetch recommended songs of a given song.
@@ -285,7 +281,7 @@ export default class PlayerArea extends Component {
   // Event Handler to change song time.
   changeSongTime = async (event) => {
     const seekSlider = event.target;
-    this.state.currSong.currentTime = `${seekSlider.value}`;
+    this.state.currAudio.currentTime = `${seekSlider.value}`;
     console.log(this.state.sliderKey);
 
     await this.setState({
@@ -301,37 +297,32 @@ export default class PlayerArea extends Component {
 
   // Event Handler to change song volume.
   changeSongVolume = (event) => {
-    this.state.currSong.volume = event.target.value / 10;
+    this.state.currAudio.volume = event.target.value / 10;
     this.setState({
       songVolume: event.target.value,
     });
   };
 
-  //event handler for adding liked songs to database
-
+  // Event handler for adding liked songs to database
   addToLikedSongs = async (event, song) => {
     try {
-      let likedSong;
+      let currSong;
       if (song) {
-        likedSong = song;
+        currSong = song;
       } else {
-        likedSong = {
-          songId: this.state.songId,
-          song: this.state.songName,
-          artist: this.state.songArtist,
-          thumbnail: this.state.songThumbnail,
-          streamAddress: this.state.streamAddress,
-          isLiked: true,
-        };
-        this.setState({
-          isSongLiked: true,
+        // This song is currently playing.
+        currSong = this.state.currSong;
+        currSong.like();
+
+        await this.setState({
+          currSong: currSong,
         });
       }
       const response = await axios({
         method: 'PUT',
         url: `${SERVER_ADDRESS}/user/like`,
         data: {
-          songId: likedSong.songId,
+          songId: currSong.id,
         },
         headers: {
           Authorization: `Bearer ${this.state.userAuthToken}`,
@@ -339,16 +330,16 @@ export default class PlayerArea extends Component {
       });
 
       const likedSongs = this.state.userLikedSongs;
-      likedSongs.unshift(likedSong);
+      likedSongs.unshift(currSong);
 
       const recommendedSongs = this.state.recommendedSongs;
       recommendedSongs.forEach((song) => {
-        if (song.songId === likedSong.songId) song.isLiked = true;
+        if (song.id === currSong.id) currSong.like();
       });
 
       const searchResults = this.state.searchResults;
       searchResults.forEach((song) => {
-        if (song.songId === likedSong.songId) song.isLiked = true;
+        if (song.id === currSong.id) song = currSong;
       });
 
       await this.setState({
@@ -375,29 +366,26 @@ export default class PlayerArea extends Component {
     }
   };
 
+  // Event handler to remove a song from liked songs in the database.
   removeFromLikedSongs = async (event, song) => {
     try {
-      let likedSong;
+      let currSong;
       if (song) {
-        likedSong = song;
+        currSong = song;
       } else {
-        likedSong = {
-          songId: this.state.songId,
-          song: this.state.songName,
-          artist: this.state.songArtist,
-          thumbnail: this.state.songThumbnail,
-          streamAddress: this.state.streamAddress,
-          isLiked: false,
-        };
+        // This song is currently playing.
+        currSong = this.state.currSong;
+        currSong.unlike();
+
         this.setState({
-          isSongLiked: false,
+          currSong: currSong,
         });
       }
       const response = await axios({
         method: 'DELETE',
         url: `${SERVER_ADDRESS}/user/like`,
         data: {
-          songId: likedSong.songId,
+          songId: currSong.id,
         },
         headers: {
           Authorization: `Bearer ${this.state.userAuthToken}`,
@@ -405,18 +393,16 @@ export default class PlayerArea extends Component {
       });
 
       let likedSongs = this.state.userLikedSongs;
-      likedSongs = likedSongs.filter(
-        (song) => song.songId !== likedSong.songId
-      );
+      likedSongs = likedSongs.filter((song) => song.id !== currSong.id);
 
       const recommendedSongs = this.state.recommendedSongs;
       recommendedSongs.forEach((song) => {
-        if (song.songId === likedSong.songId) song.isLiked = false;
+        if (song.id === currSong.id) song.unlike();
       });
 
       const searchResults = this.state.searchResults;
       searchResults.forEach((song) => {
-        if (song.songId === likedSong.songId) song.isLiked = false;
+        if (song.id === currSong.id) song.isLiked = false;
       });
 
       await this.setState({
@@ -553,8 +539,10 @@ export default class PlayerArea extends Component {
             volume={this.state.songVolume}
             hasSongLoaded={this.state.hasSongLoaded}
             isSongPlaying={this.state.isSongPlaying}
-            isSongLiked={this.state.isSongLiked}
-            sliderKey={this.state.sliderKey}
+            isSongLiked={
+              this.state.currSong ? this.state.currSong.isLiked : null
+            }
+            // sliderKey={this.state.sliderKey}
             onPlayPause={this.toggleSong}
             onNext={this.playNextSong}
             onSongSeek={this.changeSongTime}

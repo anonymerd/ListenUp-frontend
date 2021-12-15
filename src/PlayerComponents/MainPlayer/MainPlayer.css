@@ -4,6 +4,12 @@
   color: white;
 }
 
+.main-player-container .main-player-cover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
 .main-player-container .player-controls-container {
   width: 100%;
   margin-bottom: 40px;

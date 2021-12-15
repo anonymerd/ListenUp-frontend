@@ -9,8 +9,6 @@ export default class Song {
 
     this.load = () => {
       this.audio = new Audio(this.streamAddress);
-
-      // this.audio.addEventListener('canplaythrough', () )
     };
 
     this.setDuration = (duration) => {
@@ -26,6 +24,14 @@ export default class Song {
         streamAddress: this.streamAddress,
         isLiked: this.isLiked,
       };
+    };
+
+    this.like = () => {
+      this.isLiked = true;
+    };
+
+    this.unlike = () => {
+      this.isLiked = false;
     };
   }
 }

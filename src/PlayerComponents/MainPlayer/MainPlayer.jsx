@@ -9,6 +9,7 @@ import replayIcon from '../../assets/icons/player-icons/repeat-icon.svg';
 import prevIcon from '../../assets/icons/player-icons/prev-icon.svg';
 import nextIcon from '../../assets/icons/player-icons/next-icon.svg';
 import shareIcon from '../../assets/icons/player-icons/share-icon.svg';
+import loaderIcon from '../../assets/icons/loader.svg';
 
 // Importing volumne Icons
 import volumeIconMax from '../../assets/icons/volume-icons/volume-icon-max.svg';
@@ -41,8 +42,15 @@ const MainPlayer = (props) => {
   else if (props.volume > 3 && props.volume < 7) volumeIcon = volumeIconMid;
   else volumeIcon = volumeIconMax;
 
+  const loader = (
+    <div className='loader-container'>
+      <img src={loaderIcon} alt='Loader Icon' />
+    </div>
+  );
+
   return (
     <div className='main-player-container'>
+      {props.hasSongLoaded ? null : <div className='main-player-cover'></div>}
       <div className='player-controls-container'>
         <div className='left-side-controls-container'>
           <div className='song-duration-container'>
@@ -75,15 +83,19 @@ const MainPlayer = (props) => {
           <div className='prev-btn-container'>
             <img src={prevIcon} alt='Previous Button Icon' />
           </div>
-          <div className='play-pause-btn-container'>
-            <div
-              className={`btn ${props.isSongPlaying ? 'pause' : 'play'}`}
-              onClick={props.onPlayPause}
-            >
-              <span className='bar bar-1'></span>
-              <span className='bar bar-2'></span>
+          {props.hasSongLoaded ? (
+            <div className='play-pause-btn-container'>
+              <div
+                className={`btn ${props.isSongPlaying ? 'pause' : 'play'}`}
+                onClick={props.onPlayPause}
+              >
+                <span className='bar bar-1'></span>
+                <span className='bar bar-2'></span>
+              </div>
             </div>
-          </div>
+          ) : (
+            loader
+          )}
           <div className='next-btn-container' onClick={props.onNext}>
             <img src={nextIcon} alt='Next Button Icon' />
           </div>
