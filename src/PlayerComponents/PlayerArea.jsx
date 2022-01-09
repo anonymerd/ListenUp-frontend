@@ -32,7 +32,7 @@ export default class PlayerArea extends Component {
     selectedOption: 'liked',
     displayList: new Queue([]),
 
-    currQueue: new Queue([]),
+    playerQueue: new Queue([]),
 
     searchInput: '',
     sliderKey: `${Math.random()}`,
@@ -144,12 +144,12 @@ export default class PlayerArea extends Component {
     // If the song is played from the Display List then adding the song into the Current Queue first.
     if (fromDisplayList) {
       this.setState({
-        currQueue: new Queue([newSong]),
+        playerQueue: new Queue([newSong]),
       });
-      // this.state.currQueue.addSong(newSong);
+      // this.state.playerQueue.addSong(newSong);
     }
 
-    console.log(this.state.currQueue.songList.map((song) => song.getInfo()));
+    console.log(this.state.playerQueue.songList.map((song) => song.getInfo()));
 
     this.setState({
       hasSongLoaded: false,
@@ -306,8 +306,9 @@ export default class PlayerArea extends Component {
 
   /**
    * @desc Plays the next song.
+   * @param  {Queue} currQueue The queue from which the next song has to be played.
    */
-  playNextSong = () => {
+  playNextSong = (currQueue) => {
     // Getting next song from the Current Queue.
     let nextSong = this.state.currQueue.getNextSong();
 
@@ -339,10 +340,10 @@ export default class PlayerArea extends Component {
    */
   playPrevSong = () => {
     // Getting previous song from the Current Queue.
-    const prevSong = this.state.currQueue.getPrevSong();
+    const prevSong = this.state.playerQueue.getPrevSong();
 
     console.log(
-      'This is from play prev song: ' + this.state.currQueue.currentSong
+      'This is from play prev song: ' + this.state.playerQueue.currentSong
     );
 
     if (prevSong) {
@@ -612,6 +613,7 @@ export default class PlayerArea extends Component {
             songTimeElapsed={this.state.songTimeElapsed}
             songDuration={this.state.songDuration}
             volume={this.state.songVolume}
+            playerQueue={this.state.playerQueue}
             hasSongLoaded={this.state.hasSongLoaded}
             isSongPlaying={this.state.isSongPlaying}
             isSongLiked={

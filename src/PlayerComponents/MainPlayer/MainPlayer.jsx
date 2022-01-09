@@ -80,7 +80,12 @@ const MainPlayer = (props) => {
           </div>
         </div>
         <div className='song-btn-container'>
-          <div className='prev-btn-container' onClick={props.onPrev}>
+          <div
+            className='prev-btn-container'
+            onClick={() => {
+              props.onPrev(props.playerQueue);
+            }}
+          >
             <img src={prevIcon} alt='Previous Button Icon' />
           </div>
           {props.hasSongLoaded ? (
@@ -96,7 +101,12 @@ const MainPlayer = (props) => {
           ) : (
             loader
           )}
-          <div className='next-btn-container' onClick={props.onNext}>
+          <div
+            className='next-btn-container'
+            onClick={() => {
+              props.onNext(props.playerQueue);
+            }}
+          >
             <img src={nextIcon} alt='Next Button Icon' />
           </div>
         </div>
