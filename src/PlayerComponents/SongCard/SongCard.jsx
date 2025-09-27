@@ -12,18 +12,18 @@ const SongCard = (props) => {
         <div
           className='song-thumbnail'
           style={{ backgroundImage: `url(${props.song.thumbnail})` }}
-          onClick={() => props.onClick(props.song, true)}
+          onClick={() => props.onClick()}
         ></div>
         <div className='music-info'>
           <div className='song-name'>{props.song.name}</div>
           <div className='artist-name'>{props.song.artist}</div>
           <div className='like-icon-container'>
-            {isLiked ? (
+            {props.song.isLiked ? (
               <img
                 src={likedIcon}
                 alt='Liked Icon'
                 onClick={() => {
-                  toggleLike(false);
+                  // toggleLike(false);
                   props.removeFromLikedSongs();
                 }}
               />
@@ -32,7 +32,7 @@ const SongCard = (props) => {
                 src={likeIcon}
                 alt='Like Icon'
                 onClick={() => {
-                  toggleLike(true);
+                  // toggleLike(true);
                   props.addToLikedSongs();
                 }}
               />

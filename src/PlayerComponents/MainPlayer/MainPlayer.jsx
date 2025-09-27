@@ -83,7 +83,7 @@ const MainPlayer = (props) => {
           <div
             className='prev-btn-container'
             onClick={() => {
-              props.onPrev(props.playerQueue);
+              props.onPrev();
             }}
           >
             <img src={prevIcon} alt='Previous Button Icon' />
@@ -104,7 +104,7 @@ const MainPlayer = (props) => {
           <div
             className='next-btn-container'
             onClick={() => {
-              props.onNext(props.playerQueue);
+              props.onNext();
             }}
           >
             <img src={nextIcon} alt='Next Button Icon' />
